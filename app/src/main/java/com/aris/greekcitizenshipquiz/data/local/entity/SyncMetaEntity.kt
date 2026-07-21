@@ -16,8 +16,10 @@ import androidx.room.PrimaryKey
 )
 data class SyncMetaEntity(
 
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    val id: Int = 1,
+
     val version: Int,
+
     val updatedAt: String
 )

@@ -1,6 +1,8 @@
 package com.aris.greekcitizenshipquiz.data.local.util
 
+import android.util.Log
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.util.zip.ZipInputStream
 
 
@@ -10,6 +12,7 @@ object ZipExtractor {
     fun extractZip(
         zipFile: File
     ): Map<String, String> {
+
 
         val files = mutableMapOf<String, String>()
 
@@ -25,14 +28,21 @@ object ZipExtractor {
             while (entry != null) {
 
 
-                if (!entry.isDirectory) {
+                Log.d(
+                    "ZIP",
+                    "ENTRY = ${entry.name}"
+                )
 
 
-                    val content = zipInputStream
-                        .bufferedReader()
-                        .use { reader ->
-                            reader.readText()
-                        }
+                if (!entry.isDirectory &&
+                    entry.name.endsWith(".json", ignoreCase = true)
+                ) {
+
+
+                    val content =
+                        zipInputStream
+                            .readBytes()
+                            .toString(Charsets.UTF_8)
 
 
                     files[entry.name] = content
@@ -45,6 +55,12 @@ object ZipExtractor {
                 entry = zipInputStream.nextEntry
             }
         }
+
+
+        Log.d(
+            "ZIP",
+            "TOTAL JSON FILES = ${files.size}"
+        )
 
 
         return files

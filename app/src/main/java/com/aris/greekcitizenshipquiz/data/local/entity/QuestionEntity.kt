@@ -32,12 +32,8 @@ import androidx.room.PrimaryKey
         Index(value = ["isDeleted"]),
         Index(value = ["createdAt"]),
         Index(value = ["updatedAt"]),
-        Index(
-            value = [
-                "categoryId",
-                "questionNumber"
-            ]
-        )
+        Index(value = ["categoryId"]),
+        Index(value = ["typeQuestionId"]),
     ]
 )
 data class QuestionEntity(

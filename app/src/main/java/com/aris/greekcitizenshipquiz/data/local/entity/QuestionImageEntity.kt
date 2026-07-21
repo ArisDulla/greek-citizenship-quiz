@@ -25,16 +25,12 @@ import androidx.room.PrimaryKey
             value = [
                 "questionId",
                 "order"
-            ]
-        ),
-        Index(
-            value = [
-                "questionId",
-                "order"
             ],
             unique = true
         ),
+
         Index(value = ["createdAt"]),
+
         Index(value = ["updatedAt"])
     ]
 )
