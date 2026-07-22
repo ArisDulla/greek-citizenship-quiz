@@ -9,7 +9,7 @@ import com.aris.greekcitizenshipquiz.data.local.dao.QuestionImageDao
 import com.aris.greekcitizenshipquiz.data.local.dao.QuestionOptionDao
 import com.aris.greekcitizenshipquiz.data.local.dao.SyncMetaDao
 import com.aris.greekcitizenshipquiz.data.local.dao.TypeQuestionDao
-import com.aris.greekcitizenshipquiz.data.local.util.ZipExtractor
+import com.aris.greekcitizenshipquiz.data.remote.util.ZipExtractor
 import com.aris.greekcitizenshipquiz.data.remote.api.QuizApi
 import com.aris.greekcitizenshipquiz.data.remote.dto.CategoryQuestionDto
 import com.aris.greekcitizenshipquiz.data.remote.dto.ExamPeriodDto
@@ -21,7 +21,6 @@ import okhttp3.ResponseBody
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.aris.greekcitizenshipquiz.data.local.entity.SyncMetaEntity
 import com.aris.greekcitizenshipquiz.data.remote.dto.QuestionDto
 import com.aris.greekcitizenshipquiz.data.remote.dto.VersionDto
 import com.aris.greekcitizenshipquiz.data.mapper.toEntity
@@ -197,33 +196,37 @@ class QuizRepository @Inject constructor(
             Log.d(
                 "SYNC",
                 """
-    PARSE COMPLETED
-    
-    Version:
-    ${newVersion.version}
-    ${newVersion.updatedAt}
-    
-    Categories:
-    ${categories.size}
-    
-    Types:
-    ${types.size}
-    
-    Questions:
-    ${questions.size}
-    
-    Options:
-    ${options.size}
-    
-    Images:
-    ${images.size}
-    
-    Exam Periods:
-    ${examPeriods.size}
-    """.trimIndent()
+            PARSE COMPLETED
+
+            Version:
+            ${newVersion.version}
+            ${newVersion.updatedAt}
+
+            Categories:
+            ${categories.size}
+
+            Types:
+            ${types.size}
+
+            Questions:
+            ${questions.size}
+
+            Options:
+            ${options.size}
+
+            Images:
+            ${images.size}
+
+            Exam Periods:
+            ${examPeriods.size}
+            """.trimIndent()
             )
 
             // --------------------
+            //
+            // Execute all database updates safely within a transaction.
+            // If an error occurs, the transaction is rolled back.
+            //
             appDatabase.withTransaction {
 
 
@@ -270,10 +273,7 @@ class QuizRepository @Inject constructor(
 
 
                 syncMetaDao.saveSyncMeta(
-                    SyncMetaEntity(
-                        version = newVersion.version,
-                        updatedAt = newVersion.updatedAt
-                    )
+                    newVersion.toEntity()
                 )
                 Log.d(
                     "SYNC",
@@ -291,16 +291,13 @@ class QuizRepository @Inject constructor(
             Log.e("SYNC", "Sync failed", e)
             Result.failure(e)
         }
-
     }
-
-
 
     private fun saveZipTemporarily(
         body: ResponseBody
     ): File {
 
-
+        // Create temporary ZIP file
         val file =
             File.createTempFile(
                 "quiz_update",

@@ -1,4 +1,4 @@
-package com.aris.greekcitizenshipquiz.data.local.util
+package com.aris.greekcitizenshipquiz.data.remote.util
 
 import android.util.Log
 import java.io.File
