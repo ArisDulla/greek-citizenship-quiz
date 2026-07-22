@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlinx.coroutines.flow.asStateFlow
-
+import com.aris.greekcitizenshipquiz.domain.model.SyncResult
 @HiltViewModel
 class QuizViewModel @Inject constructor(
     private val syncQuizDataUseCase: SyncQuizDataUseCase
@@ -29,62 +29,26 @@ class QuizViewModel @Inject constructor(
 
     fun syncQuizData() {
 
-
         viewModelScope.launch {
 
+            _uiState.value = QuizUiState.Loading
 
-            _uiState.value =
-                QuizUiState.Loading
+            val result = syncQuizDataUseCase()
 
+            _uiState.value = when (result) {
 
-            val result =
-                syncQuizDataUseCase()
-
-
-            _uiState.value =
-                if (result.isSuccess) {
-
+                SyncResult.Updated -> {
                     QuizUiState.Success
-
-                } else {
-
-                    val error =
-                        result.exceptionOrNull()
-
-                    when (error) {
-
-                        is SyncException -> {
-
-                            when(error.code) {
-
-                                400 ->
-                                    QuizUiState.Error(
-                                        "Μη έγκυρη ενημέρωση"
-                                    )
-
-                                404 ->
-                                    QuizUiState.Error(
-                                        "Δεν βρέθηκαν δεδομένα ενημέρωσης"
-                                    )
-
-                                500 ->
-                                    QuizUiState.Error(
-                                        "Πρόβλημα διακομιστή"
-                                    )
-
-                                else ->
-                                    QuizUiState.Error(
-                                        "Άγνωστο σφάλμα"
-                                    )
-                            }
-                        }
-
-                        else ->
-                            QuizUiState.Error(
-                                "Πρόβλημα σύνδεσης"
-                            )
-                    }
                 }
+
+                SyncResult.NoUpdates -> {
+                    QuizUiState.NoUpdates
+                }
+
+                is SyncResult.Error -> {
+                    QuizUiState.Error(result.message)
+                }
+            }
         }
     }
 

@@ -54,7 +54,12 @@ fun QuizScreen(
                     text = "Τα δεδομένα ενημερώθηκαν!"
                 )
             }
+            QuizUiState.NoUpdates -> {
 
+                Text(
+                    text = "Δεν υπάρχουν διαθέσιμες ενημερώσεις."
+                )
+            }
 
             is QuizUiState.Error -> {
 

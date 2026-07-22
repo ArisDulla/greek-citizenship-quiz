@@ -27,6 +27,7 @@ import com.aris.greekcitizenshipquiz.data.mapper.toEntity
 import android.util.Log
 import com.aris.greekcitizenshipquiz.data.remote.error.SyncException
 import com.aris.greekcitizenshipquiz.domain.repository.QuizRepository
+import com.aris.greekcitizenshipquiz.domain.model.SyncResult
 
 @Singleton
 class QuizRepositoryImpl @Inject constructor(
@@ -54,7 +55,7 @@ class QuizRepositoryImpl @Inject constructor(
 ) : QuizRepository {
 
 
-    override suspend fun syncQuizData(): Result<Unit> {
+    override suspend fun syncQuizData(): SyncResult {
 
         Log.d("SYNC", "Repository started")
 
@@ -81,22 +82,20 @@ class QuizRepositoryImpl @Inject constructor(
                     "No updates available"
                 )
 
-                return Result.success(Unit)
+                return SyncResult.NoUpdates
             }
             if (!response.isSuccessful) {
 
-                return Result.failure(
-                    SyncException(
-                        response.code()
-                    )
+                return SyncResult.Error(
+                    SyncException(response.code()).message ?: "Unknown error"
                 )
             }
 
             // 3. Save ZIP temporarily in device storage
             val body =
                 response.body()
-                    ?: return Result.failure(
-                        Exception("Empty response")
+                    ?: return SyncResult.Error(
+                        "Empty response"
                     )
             val zipFile =
                 saveZipTemporarily(body)
@@ -108,8 +107,8 @@ class QuizRepositoryImpl @Inject constructor(
             // 5. Parse JSON files into DTO objects -----------------------------
             val versionJson =
                 files["version.json"]
-                    ?: return Result.failure(
-                        Exception("Missing version.json")
+                    ?: return SyncResult.Error(
+                        "Missing version.json"
                     )
 
             val versionDto: VersionDto? =
@@ -120,16 +119,17 @@ class QuizRepositoryImpl @Inject constructor(
 
             val newVersion =
                 versionDto
-                    ?: return Result.failure(
-                        Exception("Missing version data")
+                    ?: return SyncResult.Error(
+                        "Missing version data"
                     )
 
             // -------------------------
             val questionsJson =
                 files["questions.json"]
-                    ?: return Result.failure(
-                        Exception("Missing questions.json")
+                    ?: return SyncResult.Error(
+                        "Missing questions.json"
                     )
+
             val questions: List<QuestionDto> =
                 jsonParser.parseList(
                     questionsJson,
@@ -138,9 +138,10 @@ class QuizRepositoryImpl @Inject constructor(
             // ------------------------
             val optionsJson =
                 files["options.json"]
-                    ?: return Result.failure(
-                        Exception("Missing options.json")
+                    ?: return SyncResult.Error(
+                        "Missing options.json"
                     )
+
             val options: List<QuestionOptionDto> =
                 jsonParser.parseList(
                     optionsJson,
@@ -149,9 +150,10 @@ class QuizRepositoryImpl @Inject constructor(
             // -----------------------
             val imagesJson =
                 files["images.json"]
-                    ?: return Result.failure(
-                        Exception("Missing images.json")
+                    ?: return SyncResult.Error(
+                        "Missing images.json"
                     )
+
             val images: List<QuestionImageDto> =
                 jsonParser.parseList(
                     imagesJson,
@@ -160,8 +162,8 @@ class QuizRepositoryImpl @Inject constructor(
             // ----------------------
             val categoriesJson =
                 files["categories.json"]
-                    ?: return Result.failure(
-                        Exception("Missing categories.json")
+                    ?: return SyncResult.Error(
+                        "Missing categories.json"
                     )
             val categories: List<CategoryQuestionDto> =
                 jsonParser.parseList(
@@ -171,9 +173,10 @@ class QuizRepositoryImpl @Inject constructor(
             // --------------------
             val typesJson =
                 files["types.json"]
-                    ?: return Result.failure(
-                        Exception("Missing types.json")
+                    ?: return SyncResult.Error(
+                        "Missing types.json"
                     )
+
             val types: List<TypeQuestionDto> =
                 jsonParser.parseList(
                     typesJson,
@@ -182,9 +185,10 @@ class QuizRepositoryImpl @Inject constructor(
             // --------------------
             val examPeriodsJson =
                 files["exam_periods.json"]
-                    ?: return Result.failure(
-                        Exception("Missing exam_periods.json")
+                    ?: return SyncResult.Error(
+                        "Missing exam_periods.json"
                     )
+
             val examPeriods: List<ExamPeriodDto> =
                 jsonParser.parseList(
                     examPeriodsJson,
@@ -287,11 +291,13 @@ class QuizRepositoryImpl @Inject constructor(
                 zipFile.delete()
             }
 
-            Result.success(Unit)
+            SyncResult.Updated
 
         } catch (e: Exception) {
             Log.e("SYNC", "Sync failed", e)
-            Result.failure(e)
+            SyncResult.Error(
+                e.message ?: "Unknown error"
+            )
         }
     }
 

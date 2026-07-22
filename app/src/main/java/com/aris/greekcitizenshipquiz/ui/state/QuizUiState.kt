@@ -12,4 +12,6 @@ sealed class QuizUiState {
         val message: String
     ) : QuizUiState()
 
+    data object NoUpdates : QuizUiState()
+
 }

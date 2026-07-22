@@ -1,4 +1,5 @@
 package com.aris.greekcitizenshipquiz.domain.repository
+import com.aris.greekcitizenshipquiz.domain.model.SyncResult
 
 //
 // Χρειάζομαι έναν τρόπο να συγχρονίσω δεδομένα  ΚΑΙ ΟΧΙ Κατέβασε ZIP με Retrofit και βάλε τα σε Room.
@@ -6,7 +7,6 @@ package com.aris.greekcitizenshipquiz.domain.repository
 interface QuizRepository {
 
 
-    suspend fun syncQuizData(): Result<Unit>
-
+    suspend fun syncQuizData(): SyncResult
 
 }
