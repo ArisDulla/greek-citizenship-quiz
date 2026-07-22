@@ -2,6 +2,7 @@ package com.aris.greekcitizenshipquiz.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aris.greekcitizenshipquiz.data.remote.error.SyncException
 import com.aris.greekcitizenshipquiz.domain.usecase.SyncQuizDataUseCase
 import com.aris.greekcitizenshipquiz.ui.state.QuizUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,12 +48,42 @@ class QuizViewModel @Inject constructor(
 
                 } else {
 
-                    QuizUiState.Error(
+                    val error =
                         result.exceptionOrNull()
-                            ?.message
-                            ?: "Unknown error"
-                    )
 
+                    when (error) {
+
+                        is SyncException -> {
+
+                            when(error.code) {
+
+                                400 ->
+                                    QuizUiState.Error(
+                                        "Μη έγκυρη ενημέρωση"
+                                    )
+
+                                404 ->
+                                    QuizUiState.Error(
+                                        "Δεν βρέθηκαν δεδομένα ενημέρωσης"
+                                    )
+
+                                500 ->
+                                    QuizUiState.Error(
+                                        "Πρόβλημα διακομιστή"
+                                    )
+
+                                else ->
+                                    QuizUiState.Error(
+                                        "Άγνωστο σφάλμα"
+                                    )
+                            }
+                        }
+
+                        else ->
+                            QuizUiState.Error(
+                                "Πρόβλημα σύνδεσης"
+                            )
+                    }
                 }
         }
     }

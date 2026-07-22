@@ -25,6 +25,7 @@ import com.aris.greekcitizenshipquiz.data.remote.dto.QuestionDto
 import com.aris.greekcitizenshipquiz.data.remote.dto.VersionDto
 import com.aris.greekcitizenshipquiz.data.mapper.toEntity
 import android.util.Log
+import com.aris.greekcitizenshipquiz.data.remote.error.SyncException
 import com.aris.greekcitizenshipquiz.domain.repository.QuizRepository
 
 @Singleton
@@ -63,8 +64,7 @@ class QuizRepositoryImpl @Inject constructor(
 
             val currentMeta = syncMetaDao.getSyncMeta()
 
-            val currentVersion = 1
-               // currentMeta?.version ?: 1 play store ++++++ usesCleartextTraffic
+            val currentVersion = currentMeta?.version ?: 1 // play store ++++++ usesCleartextTraffic
 
             // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -84,9 +84,10 @@ class QuizRepositoryImpl @Inject constructor(
                 return Result.success(Unit)
             }
             if (!response.isSuccessful) {
+
                 return Result.failure(
-                    Exception(
-                        "Sync failed: ${response.code()}"
+                    SyncException(
+                        response.code()
                     )
                 )
             }
