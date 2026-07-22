@@ -3,7 +3,7 @@ package com.aris.greekcitizenshipquiz.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aris.greekcitizenshipquiz.data.repository.QuizRepository
+import com.aris.greekcitizenshipquiz.data.repository.QuizRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SyncViewModel @Inject constructor(
-    private val quizRepository: QuizRepository
+    private val quizRepositoryImpl: QuizRepositoryImpl
 ) : ViewModel() {
 
 
@@ -36,7 +36,7 @@ class SyncViewModel @Inject constructor(
 
 
             val result =
-                quizRepository.syncQuizData()
+                quizRepositoryImpl.syncQuizData()
 
             Log.d("SYNC", "result = $result")
 

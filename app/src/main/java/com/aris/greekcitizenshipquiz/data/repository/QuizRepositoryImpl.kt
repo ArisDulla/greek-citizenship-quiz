@@ -25,9 +25,10 @@ import com.aris.greekcitizenshipquiz.data.remote.dto.QuestionDto
 import com.aris.greekcitizenshipquiz.data.remote.dto.VersionDto
 import com.aris.greekcitizenshipquiz.data.mapper.toEntity
 import android.util.Log
+import com.aris.greekcitizenshipquiz.domain.repository.QuizRepository
 
 @Singleton
-class QuizRepository @Inject constructor(
+class QuizRepositoryImpl @Inject constructor(
 
     private val quizApi: QuizApi,
 
@@ -49,10 +50,10 @@ class QuizRepository @Inject constructor(
 
     private val syncMetaDao: SyncMetaDao
 
-) {
+) : QuizRepository {
 
 
-    suspend fun syncQuizData(): Result<Unit> {
+    override suspend fun syncQuizData(): Result<Unit> {
 
         Log.d("SYNC", "Repository started")
 
