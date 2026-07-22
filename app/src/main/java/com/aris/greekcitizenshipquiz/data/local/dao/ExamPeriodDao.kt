@@ -78,4 +78,12 @@ interface ExamPeriodDao {
         WHERE isActive = 1
     """)
     suspend fun getActivePeriodCount(): Int
+
+    @Query("""
+    SELECT title
+    FROM exam_period
+    ORDER BY updatedAt DESC
+    LIMIT 1
+""")
+    fun observeLatestExamPeriodTitle(): Flow<String?>
 }

@@ -28,7 +28,7 @@ import android.util.Log
 import com.aris.greekcitizenshipquiz.data.remote.error.SyncException
 import com.aris.greekcitizenshipquiz.domain.repository.QuizRepository
 import com.aris.greekcitizenshipquiz.domain.model.SyncResult
-
+import kotlinx.coroutines.flow.Flow
 @Singleton
 class QuizRepositoryImpl @Inject constructor(
 
@@ -54,7 +54,9 @@ class QuizRepositoryImpl @Inject constructor(
 
 ) : QuizRepository {
 
-
+    override fun observeLatestExamPeriodTitle(): Flow<String?> {
+        return examPeriodDao.observeLatestExamPeriodTitle()
+    }
     override suspend fun syncQuizData(): SyncResult {
 
         Log.d("SYNC", "Repository started")
