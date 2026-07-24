@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.aris.greekcitizenshipquiz.data.local.dao.CategoryQuestionDao
 import com.aris.greekcitizenshipquiz.data.local.dao.ExamPeriodDao
+import com.aris.greekcitizenshipquiz.data.local.dao.IncorrectAnswerDao
 import com.aris.greekcitizenshipquiz.data.local.dao.QuestionDao
 import com.aris.greekcitizenshipquiz.data.local.dao.QuestionImageDao
 import com.aris.greekcitizenshipquiz.data.local.dao.QuestionOptionDao
@@ -16,6 +17,7 @@ import com.aris.greekcitizenshipquiz.data.local.entity.QuestionImageEntity
 import com.aris.greekcitizenshipquiz.data.local.entity.QuestionOptionEntity
 import com.aris.greekcitizenshipquiz.data.local.entity.SyncMetaEntity
 import com.aris.greekcitizenshipquiz.data.local.entity.TypeQuestionEntity
+import com.aris.greekcitizenshipquiz.data.local.entity.IncorrectAnswerEntity
 
 
 @Database(
@@ -28,7 +30,8 @@ import com.aris.greekcitizenshipquiz.data.local.entity.TypeQuestionEntity
         QuestionOptionEntity::class,
         QuestionImageEntity::class,
 
-        SyncMetaEntity::class
+        SyncMetaEntity::class,
+        IncorrectAnswerEntity::class
     ],
     version = 1,
     exportSchema = true
@@ -55,4 +58,6 @@ abstract class AppDatabase : RoomDatabase() {
 
 
     abstract fun syncMetaDao(): SyncMetaDao
+
+    abstract fun incorrectAnswerDao(): IncorrectAnswerDao
 }
