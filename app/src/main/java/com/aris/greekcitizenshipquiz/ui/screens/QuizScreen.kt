@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 @Composable
 fun QuizScreen(
     modifier: Modifier = Modifier,
+    onOpenMenu: () -> Unit,
     viewModel: QuizViewModel = hiltViewModel()
 ) {
 
@@ -140,7 +141,7 @@ fun QuizScreen(
                 .width(260.dp)
                 .height(55.dp),
             onClick = {
-
+                onOpenMenu()
             }
         ) {
 

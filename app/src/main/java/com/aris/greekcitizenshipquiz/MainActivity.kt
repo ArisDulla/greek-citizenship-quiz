@@ -4,14 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
 import com.aris.greekcitizenshipquiz.ui.theme.GreekCitizenshipQuizTheme
 import dagger.hilt.android.AndroidEntryPoint
-import com.aris.greekcitizenshipquiz.ui.screens.QuizScreen
-
+import com.aris.greekcitizenshipquiz.ui.navigation.NavGraph
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -27,14 +22,9 @@ class MainActivity : ComponentActivity() {
 
             GreekCitizenshipQuizTheme {
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                ) { innerPadding ->
+                NavGraph()
 
-                    QuizScreen(
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+
             }
         }
     }
