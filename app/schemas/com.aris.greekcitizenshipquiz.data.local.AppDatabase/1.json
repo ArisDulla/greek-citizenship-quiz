@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d8ce07c123fdb43d1a35c1e79adafb03",
+    "identityHash": "c57a551c55c9d892ba467770e2dd1451",
     "entities": [
       {
         "tableName": "category_question",
@@ -640,11 +640,29 @@
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_sync_meta_version` ON `${TABLE_NAME}` (`version`)"
           }
         ]
+      },
+      {
+        "tableName": "incorrect_answers",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`questionId` INTEGER NOT NULL, PRIMARY KEY(`questionId`))",
+        "fields": [
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "questionId"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd8ce07c123fdb43d1a35c1e79adafb03')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c57a551c55c9d892ba467770e2dd1451')"
     ]
   }
 }

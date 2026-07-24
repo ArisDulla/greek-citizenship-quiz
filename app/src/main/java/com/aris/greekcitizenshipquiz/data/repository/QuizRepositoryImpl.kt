@@ -25,10 +25,14 @@ import com.aris.greekcitizenshipquiz.data.remote.dto.QuestionDto
 import com.aris.greekcitizenshipquiz.data.remote.dto.VersionDto
 import com.aris.greekcitizenshipquiz.data.mapper.toEntity
 import android.util.Log
+import com.aris.greekcitizenshipquiz.data.local.dao.IncorrectAnswerDao
+import com.aris.greekcitizenshipquiz.data.local.entity.IncorrectAnswerEntity
 import com.aris.greekcitizenshipquiz.data.remote.error.SyncException
 import com.aris.greekcitizenshipquiz.domain.repository.QuizRepository
 import com.aris.greekcitizenshipquiz.domain.model.SyncResult
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
 @Singleton
 class QuizRepositoryImpl @Inject constructor(
 
@@ -50,7 +54,9 @@ class QuizRepositoryImpl @Inject constructor(
 
     private val examPeriodDao: ExamPeriodDao,
 
-    private val syncMetaDao: SyncMetaDao
+    private val syncMetaDao: SyncMetaDao,
+
+    private val incorrectAnswerDao: IncorrectAnswerDao
 
 ) : QuizRepository {
 
@@ -330,6 +336,28 @@ class QuizRepositoryImpl @Inject constructor(
         )
 
         return file
+    }
+   override suspend fun addIncorrectAnswer(questionId: Int) {
+        incorrectAnswerDao.insert(
+            IncorrectAnswerEntity(
+                questionId = questionId
+            )
+        )
+    }
+
+    override fun observeIncorrectAnswers(): Flow<List<Int>> {
+        return incorrectAnswerDao.observeAll()
+            .map { list ->
+                list.map { it.questionId }
+            }
+    }
+
+    override suspend fun removeIncorrectAnswer(questionId: Int) {
+        incorrectAnswerDao.delete(questionId)
+    }
+
+    override suspend fun clearIncorrectAnswers() {
+        incorrectAnswerDao.deleteAll()
     }
 
 }

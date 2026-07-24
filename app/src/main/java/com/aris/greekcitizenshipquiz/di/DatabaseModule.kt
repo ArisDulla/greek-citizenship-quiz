@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.aris.greekcitizenshipquiz.data.local.AppDatabase
 import com.aris.greekcitizenshipquiz.data.local.dao.CategoryQuestionDao
 import com.aris.greekcitizenshipquiz.data.local.dao.ExamPeriodDao
+import com.aris.greekcitizenshipquiz.data.local.dao.IncorrectAnswerDao
 import com.aris.greekcitizenshipquiz.data.local.dao.QuestionDao
 import com.aris.greekcitizenshipquiz.data.local.dao.QuestionImageDao
 import com.aris.greekcitizenshipquiz.data.local.dao.QuestionOptionDao
@@ -44,6 +45,10 @@ object DatabaseModule {
     ): QuestionDao {
         return database.questionDao()
     }
+
+    @Provides
+    fun provideIncorrectAnswerDao(database: AppDatabase): IncorrectAnswerDao =
+        database.incorrectAnswerDao()
 
 
     @Provides

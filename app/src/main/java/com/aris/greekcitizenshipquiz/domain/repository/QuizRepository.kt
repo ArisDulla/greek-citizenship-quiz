@@ -11,4 +11,11 @@ interface QuizRepository {
 
     fun observeLatestExamPeriodTitle(): Flow<String?>
 
+    suspend fun addIncorrectAnswer(questionId: Int)
+
+    fun observeIncorrectAnswers(): Flow<List<Int>>
+
+    suspend fun removeIncorrectAnswer(questionId: Int)
+
+    suspend fun clearIncorrectAnswers()
 }
