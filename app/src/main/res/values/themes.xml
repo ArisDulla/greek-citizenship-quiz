@@ -2,4 +2,25 @@
 <resources>
 
     <style name="Theme.GreekCitizenshipQuiz" parent="android:Theme.Material.Light.NoActionBar" />
+
+
+    <style name="Theme.GreekCitizenshipQuiz.Starting" parent="Theme.SplashScreen">
+
+        <item name="windowSplashScreenBackground">
+            #FFFFFF
+        </item>
+
+        <item name="windowSplashScreenAnimatedIcon">
+            @drawable/ic_splash_logo
+        </item>
+
+        <item name="windowSplashScreenAnimationDuration">
+            500
+        </item>
+
+        <item name="postSplashScreenTheme">
+            @style/Theme.GreekCitizenshipQuiz
+        </item>
+
+    </style>
 </resources>

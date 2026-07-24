@@ -7,11 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import com.aris.greekcitizenshipquiz.ui.theme.GreekCitizenshipQuizTheme
 import dagger.hilt.android.AndroidEntryPoint
 import com.aris.greekcitizenshipquiz.ui.navigation.NavGraph
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        installSplashScreen()
 
         super.onCreate(savedInstanceState)
 

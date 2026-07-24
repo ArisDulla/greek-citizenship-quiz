@@ -67,6 +67,8 @@ dependencies {
     // Navigation
     implementation(libs.navigation.compose)
 
+    implementation(libs.androidx.core.splashscreen)
+
 
     // Room Database
     implementation(libs.room.runtime)
