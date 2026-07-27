@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import com.aris.greekcitizenshipquiz.domain.usecase.ObserveExamPeriodTitleUseCase
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.time.Duration.Companion.seconds
+
 @HiltViewModel
 class QuizViewModel @Inject constructor(
     private val syncQuizDataUseCase: SyncQuizDataUseCase,
@@ -68,6 +70,8 @@ class QuizViewModel @Inject constructor(
                     QuizUiState.Error("Αδυναμία σύνδεσης με τον διακομιστή.")
                 }
             }
+            delay(7.seconds)
+            _uiState.value = QuizUiState.Idle
         }
     }
 

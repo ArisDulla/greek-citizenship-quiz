@@ -7,11 +7,11 @@
     <style name="Theme.GreekCitizenshipQuiz.Starting" parent="Theme.SplashScreen">
 
         <item name="windowSplashScreenBackground">
-            #FFFFFF
+            @color/splash_background_color
         </item>
 
         <item name="windowSplashScreenAnimatedIcon">
-            @drawable/ic_splash_logo
+            @drawable/outline_check_box_24
         </item>
 
         <item name="windowSplashScreenAnimationDuration">
