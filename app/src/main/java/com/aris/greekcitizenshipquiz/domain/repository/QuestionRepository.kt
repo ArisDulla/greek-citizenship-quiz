@@ -16,4 +16,13 @@ interface QuestionRepository {
     suspend fun getQuestionGroupCountByCategory(
         categoryId: Int
     ): Int
+
+    suspend fun getQuestionsByCategory(
+        categoryId: Int
+    ): List<Question>
+
+    suspend fun getQuestionsByCategoryAndType(
+        categoryId: Int,
+        typeQuestionId: Int
+    ): List<Question>
 }

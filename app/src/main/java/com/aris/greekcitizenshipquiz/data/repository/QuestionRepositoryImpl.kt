@@ -10,6 +10,28 @@ class QuestionRepositoryImpl @Inject constructor(
     private val questionDao: QuestionDao
 ) : QuestionRepository {
 
+    override suspend fun getQuestionsByCategory(
+        categoryId: Int
+    ): List<Question> {
+
+        return questionDao
+            .getQuestionsByCategory(categoryId)
+            .map { entity ->
+
+                entity.toDomain()
+            }
+    }
+
+    override suspend fun getQuestionsByCategoryAndType(
+        categoryId: Int,
+        typeQuestionId: Int
+    ): List<Question> {
+
+        return questionDao
+            .getQuestionsByCategoryAndType(categoryId, typeQuestionId)
+            .map { it.toDomain() }
+    }
+
     override suspend fun getRandomQuestionsByCategory(
         categoryId: Int,
         limit: Int

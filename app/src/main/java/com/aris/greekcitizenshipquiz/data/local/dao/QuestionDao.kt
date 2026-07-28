@@ -52,4 +52,28 @@ interface QuestionDao {
     suspend fun getQuestionGroupCountByCategory(
         categoryId: Int
     ): Int
+
+    @Query("""
+    SELECT *
+    FROM question
+    WHERE categoryId = :categoryId
+    AND isDeleted = 0
+    ORDER BY questionNumber ASC, createdAt ASC
+""")
+    suspend fun getQuestionsByCategory(
+        categoryId: Int
+    ): List<QuestionEntity>
+
+    @Query("""
+    SELECT *
+    FROM question
+    WHERE categoryId = :categoryId
+    AND typeQuestionId = :typeQuestionId
+    AND isDeleted = 0
+    ORDER BY questionNumber ASC, createdAt ASC
+    """)
+    suspend fun getQuestionsByCategoryAndType(
+        categoryId: Int,
+        typeQuestionId: Int
+    ): List<QuestionEntity>
 }
