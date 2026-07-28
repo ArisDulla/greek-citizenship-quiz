@@ -54,7 +54,7 @@ class QuizViewModel @Inject constructor(
 
             val result = syncQuizDataUseCase()
 
-            //delay(LOADING_DELAY)
+            delay(LOADING_DELAY)
 
             _uiState.value = when (result) {
 
@@ -70,8 +70,8 @@ class QuizViewModel @Inject constructor(
                     QuizUiState.Error("Αδυναμία σύνδεσης")
                 }
             }
-//            delay(7.seconds)
-//            _uiState.value = QuizUiState.Idle
+            delay(7.seconds)
+            _uiState.value = QuizUiState.Idle
         }
     }
 

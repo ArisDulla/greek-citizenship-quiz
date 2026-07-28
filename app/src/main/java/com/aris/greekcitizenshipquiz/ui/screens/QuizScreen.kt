@@ -40,7 +40,7 @@ fun QuizScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val examTitle by viewModel.examPeriodTitle.collectAsStateWithLifecycle()
 
-    val isLoading = state is QuizUiState.Loading
+    val isLoading = state != QuizUiState.Idle
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -126,16 +126,20 @@ fun QuizScreen(
                                 .height(64.dp),
                             enabled = !isLoading,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = when (state) {
+
+                                containerColor = Color(0xFF00897B),
+
+                                disabledContainerColor = when (state) {
 
                                     QuizUiState.Success -> Color(0xFF2E7D32)
 
-                                    QuizUiState.NoUpdates -> Color(0xFF00897B)
+                                    QuizUiState.NoUpdates -> Color(0xFF546E7A)
 
                                     is QuizUiState.Error -> Color(0xFFC62828)
 
                                     else -> Color(0xFF00897B)
-                                }
+                                },
+                                disabledContentColor = Color.White
                             ),
                             onClick = {
                                 viewModel.syncQuizData()

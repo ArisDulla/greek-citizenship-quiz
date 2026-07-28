@@ -44,13 +44,13 @@ fun NavGraph() {
 //                    navController.popBackStack()
 //                },
                 onHome = {
-
                     navController.navigate(HOME_SCREEN) {
 
-                        popUpTo(HOME_SCREEN)
+                        popUpTo(HOME_SCREEN) {
+                            inclusive = true
+                        }
 
                         launchSingleTop = true
-
                     }
 
                 },
