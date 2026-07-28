@@ -21,4 +21,10 @@ interface IncorrectAnswerDao {
 
     @Query("DELETE FROM incorrect_answers")
     suspend fun deleteAll()
+
+    @Query("""
+    SELECT COUNT(*)
+    FROM incorrect_answers
+    """)
+    fun observeCount(): Flow<Int>
 }

@@ -14,7 +14,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-
+import com.aris.greekcitizenshipquiz.data.repository.IncorrectAnswerRepositoryImpl
+import com.aris.greekcitizenshipquiz.domain.repository.IncorrectAnswerRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -48,5 +49,10 @@ abstract class RepositoryModule {
     abstract fun bindExamPeriodRepository(
         impl: ExamPeriodRepositoryImpl
     ): ExamPeriodRepository
+
+    @Binds
+    abstract fun bindIncorrectAnswerRepository(
+        impl: IncorrectAnswerRepositoryImpl
+    ): IncorrectAnswerRepository
 
 }

@@ -1,14 +1,14 @@
 package com.aris.greekcitizenshipquiz.domain.usecase
 
-import com.aris.greekcitizenshipquiz.domain.repository.QuizRepository
+import com.aris.greekcitizenshipquiz.domain.repository.IncorrectAnswerRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObserveIncorrectAnswersUseCase @Inject constructor(
-    private val repository: QuizRepository
+    private val repository: IncorrectAnswerRepository
 ) {
 
     operator fun invoke(): Flow<List<Int>> {
-        return repository.observeIncorrectAnswers()
+        return repository.observeAllQuestionIds()
     }
 }
