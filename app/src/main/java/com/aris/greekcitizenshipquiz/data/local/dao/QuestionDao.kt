@@ -5,30 +5,22 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.aris.greekcitizenshipquiz.data.local.entity.QuestionEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface QuestionDao {
 
-
     @Query("""
-        SELECT *
-        FROM question
-        WHERE isDeleted = 0
-    """)
-    fun getAllQuestions(): Flow<List<QuestionEntity>>
-
-
-    @Query("""
-        SELECT *
-        FROM question
-        WHERE categoryId = :categoryId
-        AND isDeleted = 0
-    """)
-    fun getQuestionsByCategory(
-        categoryId: Int
-    ): Flow<List<QuestionEntity>>
-
+    SELECT *
+    FROM question
+    WHERE categoryId = :categoryId
+    AND isDeleted = 0
+    ORDER BY RANDOM()
+    LIMIT :limit
+""")
+    fun getRandomQuestionsByCategory(
+        categoryId: Int,
+        limit: Int
+    ): List<QuestionEntity>
 
     @Query("""
         SELECT *
@@ -40,7 +32,6 @@ interface QuestionDao {
         questionId: Int
     ): QuestionEntity?
 
-
     @Insert(
         onConflict = OnConflictStrategy.REPLACE
     )
@@ -48,41 +39,17 @@ interface QuestionDao {
         questions: List<QuestionEntity>
     )
 
-
-    @Insert(
-        onConflict = OnConflictStrategy.REPLACE
-    )
-    suspend fun insert(
-        question: QuestionEntity
-    )
-
-
     @Query("""
-        DELETE FROM question
-        WHERE questionId IN (:ids)
-    """)
-    suspend fun deleteByIds(
-        ids: List<Int>
-    )
-
-
-    @Query("""
-        UPDATE question
-        SET isDeleted = 1
-        WHERE questionId IN (:ids)
-    """)
-    suspend fun markAsDeleted(
-        ids: List<Int>
-    )
-
-
-    @Query("""
-        SELECT COUNT(*)
+    SELECT COUNT(*)
+    FROM (
+        SELECT questionNumber
         FROM question
         WHERE categoryId = :categoryId
         AND isDeleted = 0
+        GROUP BY questionNumber
+    )
     """)
-    suspend fun getQuestionCountByCategory(
+    suspend fun getQuestionGroupCountByCategory(
         categoryId: Int
     ): Int
 }

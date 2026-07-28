@@ -29,7 +29,7 @@ import androidx.room.PrimaryKey
         Index(value = ["isNew"]),
         Index(value = ["maxCorrect"]),
         Index(value = ["questionNumber"]),
-        Index(value = ["isDeleted"]),
+        Index(value = ["categoryId", "isDeleted"]),
         Index(value = ["createdAt"]),
         Index(value = ["updatedAt"]),
         Index(value = ["categoryId"]),

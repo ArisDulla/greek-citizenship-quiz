@@ -18,14 +18,6 @@ interface CategoryQuestionDao {
     )
 
     @Query("""
-        DELETE FROM category_question
-        WHERE categoryId IN (:ids)
-    """)
-    suspend fun deleteByIds(
-        ids: List<Int>
-    )
-
-    @Query("""
     SELECT *
     FROM category_question c
     WHERE c.isActive = 1
@@ -33,7 +25,7 @@ interface CategoryQuestionDao {
           SELECT 1
           FROM question q
           WHERE q.categoryId = c.categoryId
-            AND q.isDeleted = FALSE
+            AND q.isDeleted = 0
       )
 """)
     fun getActiveCategoriesWithQuestions(): Flow<List<CategoryQuestionEntity>>
