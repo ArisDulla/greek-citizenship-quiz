@@ -40,7 +40,7 @@ fun QuizScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val examTitle by viewModel.examPeriodTitle.collectAsStateWithLifecycle()
 
-    val isLoading = state == QuizUiState.Loading
+    val isLoading = state is QuizUiState.Loading
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -93,14 +93,6 @@ fun QuizScreen(
 
 
                 Spacer(
-                    modifier = Modifier.height(8.dp)
-                )
-
-
-
-
-
-                Spacer(
                     modifier = Modifier.weight(1f)
                 )
 
@@ -131,18 +123,18 @@ fun QuizScreen(
                         Button(
                             modifier = Modifier
                                 .width(240.dp)
-                                .height(56.dp),
+                                .height(64.dp),
                             enabled = !isLoading,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = when (state) {
 
                                     QuizUiState.Success -> Color(0xFF2E7D32)
 
-                                    QuizUiState.NoUpdates -> MaterialTheme.colorScheme.primary
+                                    QuizUiState.NoUpdates -> Color(0xFF00897B)
 
                                     is QuizUiState.Error -> Color(0xFFC62828)
 
-                                    else -> MaterialTheme.colorScheme.primary
+                                    else -> Color(0xFF00897B)
                                 }
                             ),
                             onClick = {
@@ -158,7 +150,7 @@ fun QuizScreen(
                             enabled = examTitle != null,
                             modifier = Modifier
                                 .width(240.dp)
-                                .height(56.dp),
+                                .height(64.dp),
                             onClick = {
                                 onOpenMenu()
                             }

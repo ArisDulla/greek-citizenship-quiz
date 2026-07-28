@@ -78,4 +78,17 @@ interface CategoryQuestionDao {
         WHERE isActive = 1
     """)
     suspend fun getActiveCategoryCount(): Int
+
+    @Query("""
+    SELECT *
+    FROM category_question c
+    WHERE c.isActive = 1
+      AND EXISTS (
+          SELECT 1
+          FROM question q
+          WHERE q.categoryId = c.categoryId
+            AND q.isDeleted = FALSE
+      )
+""")
+    fun getActiveCategoriesWithQuestions(): Flow<List<CategoryQuestionEntity>>
 }

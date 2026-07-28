@@ -32,6 +32,7 @@ import com.aris.greekcitizenshipquiz.domain.repository.QuizRepository
 import com.aris.greekcitizenshipquiz.domain.model.SyncResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import com.aris.greekcitizenshipquiz.data.local.entity.CategoryQuestionEntity
 
 @Singleton
 class QuizRepositoryImpl @Inject constructor(
@@ -358,6 +359,10 @@ class QuizRepositoryImpl @Inject constructor(
 
     override suspend fun clearIncorrectAnswers() {
         incorrectAnswerDao.deleteAll()
+    }
+
+    override fun getActiveCategoriesWithQuestions(): Flow<List<CategoryQuestionEntity>> {
+        return categoryQuestionDao.getActiveCategoriesWithQuestions()
     }
 
 }

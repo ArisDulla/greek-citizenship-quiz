@@ -40,9 +40,9 @@ fun NavGraph() {
         ) {
 
             QuizMenuScreen(
-                onBack = {
-                    navController.popBackStack()
-                },
+//                onBack = {
+//                    navController.popBackStack()
+//                },
                 onHome = {
 
                     navController.navigate(HOME_SCREEN) {

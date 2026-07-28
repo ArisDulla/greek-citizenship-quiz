@@ -2,6 +2,7 @@ package com.aris.greekcitizenshipquiz.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aris.greekcitizenshipquiz.domain.usecase.GetActiveCategoriesWithQuestionsUseCase
 import com.aris.greekcitizenshipquiz.domain.usecase.ObserveIncorrectAnswerCountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -11,7 +12,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class QuizMenuViewModel @Inject constructor(
-    observeIncorrectAnswerCountUseCase: ObserveIncorrectAnswerCountUseCase
+    private val observeIncorrectAnswerCountUseCase: ObserveIncorrectAnswerCountUseCase,
+    private val getActiveCategoriesWithQuestionsUseCase: GetActiveCategoriesWithQuestionsUseCase
 ) : ViewModel() {
 
 
@@ -19,7 +21,15 @@ class QuizMenuViewModel @Inject constructor(
         observeIncorrectAnswerCountUseCase()
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
+                started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = 0
+            )
+
+    val categories =
+        getActiveCategoriesWithQuestionsUseCase()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptyList()
             )
 }

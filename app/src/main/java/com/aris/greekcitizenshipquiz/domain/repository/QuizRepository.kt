@@ -1,4 +1,5 @@
 package com.aris.greekcitizenshipquiz.domain.repository
+import com.aris.greekcitizenshipquiz.data.local.entity.CategoryQuestionEntity
 import com.aris.greekcitizenshipquiz.domain.model.SyncResult
 import kotlinx.coroutines.flow.Flow
 //
@@ -18,4 +19,6 @@ interface QuizRepository {
     suspend fun removeIncorrectAnswer(questionId: Int)
 
     suspend fun clearIncorrectAnswers()
+
+    fun getActiveCategoriesWithQuestions(): Flow<List<CategoryQuestionEntity>>
 }

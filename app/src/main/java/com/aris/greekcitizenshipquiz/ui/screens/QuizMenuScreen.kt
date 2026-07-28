@@ -4,10 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,46 +18,151 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aris.greekcitizenshipquiz.ui.viewmodel.QuizMenuViewModel
+import com.aris.greekcitizenshipquiz.ui.components.AppBackground
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material3.CircularProgressIndicator
 
 @Composable
 fun QuizMenuScreen(
-    onBack: () -> Unit,
     onHome: () -> Unit,
     onIncorrectAnswers: () -> Unit,
-    viewModel: QuizMenuViewModel = hiltViewModel()
+    viewModel: QuizMenuViewModel = hiltViewModel(),
 ) {
     val incorrectCount by viewModel.incorrectCount.collectAsStateWithLifecycle()
+    val categories by viewModel.categories.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
 
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onHome
+    AppBackground {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+
+            contentPadding = PaddingValues(
+                top = 70.dp,
+                bottom = 70.dp
+            ),
+
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                text = "Αρχική"
-            )
-        }
+            item {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
 
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(64.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF455A64)
+                        ),
+                        onClick = onHome
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Home,
+                            contentDescription = null
+                        )
 
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
+                        Spacer(modifier = Modifier.width(8.dp))
 
+                        Text(
+                            text = "Αρχική",
+                            fontSize = 20.sp
+                        )
+                    }
 
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onIncorrectAnswers
-        ) {
-            Text(
-                text = "Τα λάθη μου ($incorrectCount)"
-            )
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(64.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFE65100)
+                        ),
+                        onClick = onIncorrectAnswers
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ErrorOutline,
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(
+                            text = "Τα λάθη μου ($incorrectCount)",
+                            fontSize = 20.sp
+                        )
+                    }
+
+                }
+            }
+
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White.copy(alpha = 0.70f),
+                        contentColor = Color.DarkGray
+                    ),
+                    border = BorderStroke(
+                        1.dp,
+                        Color.White.copy(alpha = 0.25f)
+                    )
+                ) {
+
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (categories.isEmpty()) {
+
+                            CircularProgressIndicator(modifier = Modifier.padding(32.dp))
+
+                        } else {
+
+                            categories.forEach { category ->
+
+                                Button(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(64.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary
+                                    ),
+                                    onClick = {
+                                        // category click
+                                    }
+                                ) {
+                                    Text(
+                                        text = category.description ?: "",
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 20.sp
+                                    )
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
         }
     }
 }
