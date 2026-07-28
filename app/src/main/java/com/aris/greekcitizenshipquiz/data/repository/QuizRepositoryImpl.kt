@@ -32,7 +32,8 @@ import com.aris.greekcitizenshipquiz.domain.repository.QuizRepository
 import com.aris.greekcitizenshipquiz.domain.model.SyncResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import com.aris.greekcitizenshipquiz.data.local.entity.CategoryQuestionEntity
+import com.aris.greekcitizenshipquiz.data.mapper.toDomain
+import com.aris.greekcitizenshipquiz.domain.model.CategoryQuestion
 
 @Singleton
 class QuizRepositoryImpl @Inject constructor(
@@ -66,8 +67,6 @@ class QuizRepositoryImpl @Inject constructor(
     }
     override suspend fun syncQuizData(): SyncResult {
 
-        Log.d("SYNC", "Repository started")
-
         return try {
 
             // 1. Get current local sync version
@@ -85,11 +84,6 @@ class QuizRepositoryImpl @Inject constructor(
                     version = currentVersion
                 )
             if (response.code() == 204) {
-
-                Log.d(
-                    "SYNC",
-                    "No updates available"
-                )
 
                 return SyncResult.NoUpdates
             }
@@ -361,8 +355,17 @@ class QuizRepositoryImpl @Inject constructor(
         incorrectAnswerDao.deleteAll()
     }
 
-    override fun getActiveCategoriesWithQuestions(): Flow<List<CategoryQuestionEntity>> {
+    override fun getActiveCategoriesWithQuestions(): Flow<List<CategoryQuestion>> {
+
         return categoryQuestionDao.getActiveCategoriesWithQuestions()
+            .map { entities ->
+
+                entities.map { entity ->
+
+                    entity.toDomain()
+
+                }
+            }
     }
 
 }
