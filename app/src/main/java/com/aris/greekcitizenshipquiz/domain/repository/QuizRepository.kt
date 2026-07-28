@@ -9,8 +9,6 @@ interface QuizRepository {
 
     suspend fun syncQuizData(): SyncResult
 
-    fun observeLatestExamPeriodTitle(): Flow<String?>
-
     suspend fun addIncorrectAnswer(questionId: Int)
 
     fun observeIncorrectAnswers(): Flow<List<Int>>

@@ -7,7 +7,9 @@ import com.aris.greekcitizenshipquiz.domain.repository.QuizRepository
 import com.aris.greekcitizenshipquiz.domain.repository.CategoryRepository
 import com.aris.greekcitizenshipquiz.domain.repository.QuestionRepository
 import com.aris.greekcitizenshipquiz.data.repository.CategoryRepositoryImpl
+import com.aris.greekcitizenshipquiz.data.repository.ExamPeriodRepositoryImpl
 import com.aris.greekcitizenshipquiz.data.repository.QuestionRepositoryImpl
+import com.aris.greekcitizenshipquiz.domain.repository.ExamPeriodRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,5 +43,10 @@ abstract class RepositoryModule {
     abstract fun bindJsonParser(
         impl: MoshiJsonParser
     ): JsonParser
+
+    @Binds
+    abstract fun bindExamPeriodRepository(
+        impl: ExamPeriodRepositoryImpl
+    ): ExamPeriodRepository
 
 }

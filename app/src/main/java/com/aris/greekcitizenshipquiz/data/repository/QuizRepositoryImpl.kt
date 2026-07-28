@@ -60,9 +60,6 @@ class QuizRepositoryImpl @Inject constructor(
 
 ) : QuizRepository {
 
-    override fun observeLatestExamPeriodTitle(): Flow<String?> {
-        return examPeriodDao.observeLatestExamPeriodTitle()
-    }
     override suspend fun syncQuizData(): SyncResult {
 
         return try {
