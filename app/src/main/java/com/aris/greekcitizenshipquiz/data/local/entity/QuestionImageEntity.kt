@@ -41,7 +41,7 @@ data class QuestionImageEntity(
 
     val questionId: Int,
 
-    val image: String,
+    val image: String?,
 
     val caption: String?,
 

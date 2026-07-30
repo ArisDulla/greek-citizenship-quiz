@@ -33,7 +33,7 @@ import com.aris.greekcitizenshipquiz.data.local.entity.IncorrectAnswerEntity
         SyncMetaEntity::class,
         IncorrectAnswerEntity::class
     ],
-    version = 3,
+    version = 6,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

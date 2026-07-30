@@ -4,24 +4,60 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.aris.greekcitizenshipquiz.data.local.entity.QuestionEntity
+import com.aris.greekcitizenshipquiz.data.local.relation.QuestionWithDetails
 
 @Dao
 interface QuestionDao {
 
     @Query("""
-    SELECT *
+    SELECT questionNumber
     FROM question
     WHERE categoryId = :categoryId
-    AND isDeleted = 0
+      AND isDeleted = 0
+    GROUP BY questionNumber
     ORDER BY RANDOM()
     LIMIT :limit
-""")
-    fun getRandomQuestionsByCategory(
+    """)
+    suspend fun getRandomQuestionGroups(
         categoryId: Int,
         limit: Int
-    ): List<QuestionEntity>
+    ): List<Int>
 
+    @Transaction
+    @Query("""
+    SELECT *
+    FROM question
+    WHERE questionNumber IN (:groups)
+      AND categoryId = :categoryId
+      AND isDeleted = 0
+   """)
+    suspend fun getQuestionsWithOptions(
+        groups: List<Int>,
+        categoryId: Int
+    ): List<QuestionWithDetails>
+
+    @Transaction
+    suspend fun getRandomQuestionsByCategory(
+        categoryId: Int,
+        limit: Int
+    ): List<QuestionWithDetails> {
+
+        val groups = getRandomQuestionGroups(
+            categoryId = categoryId,
+            limit = limit
+        )
+
+        return getQuestionsWithOptions(
+            groups = groups,
+            categoryId = categoryId
+        )
+    }
+
+    ////////////////////////////////////////////////
+
+    @Transaction
     @Query("""
         SELECT *
         FROM question
@@ -30,7 +66,7 @@ interface QuestionDao {
     """)
     suspend fun getQuestionById(
         questionId: Int
-    ): QuestionEntity?
+    ): QuestionWithDetails?
 
     @Insert(
         onConflict = OnConflictStrategy.REPLACE
@@ -53,6 +89,7 @@ interface QuestionDao {
         categoryId: Int
     ): Int
 
+    @Transaction
     @Query("""
     SELECT *
     FROM question
@@ -62,8 +99,9 @@ interface QuestionDao {
 """)
     suspend fun getQuestionsByCategory(
         categoryId: Int
-    ): List<QuestionEntity>
+    ): List<QuestionWithDetails>
 
+    @Transaction
     @Query("""
     SELECT *
     FROM question
@@ -75,5 +113,5 @@ interface QuestionDao {
     suspend fun getQuestionsByCategoryAndType(
         categoryId: Int,
         typeQuestionId: Int
-    ): List<QuestionEntity>
+    ): List<QuestionWithDetails>
 }

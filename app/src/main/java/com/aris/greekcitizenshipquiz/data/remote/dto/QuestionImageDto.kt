@@ -21,5 +21,8 @@ data class QuestionImageDto(
     val order: Int,
 
     @param:Json(name = "updated_at")
-    val updatedAt: String
+    val updatedAt: String,
+
+    @param:Json(name = "created_at")
+    val createdAt: String,
 )

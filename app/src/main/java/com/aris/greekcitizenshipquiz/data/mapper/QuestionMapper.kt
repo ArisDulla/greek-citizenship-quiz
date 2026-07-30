@@ -3,7 +3,7 @@ package com.aris.greekcitizenshipquiz.data.mapper
 import com.aris.greekcitizenshipquiz.data.local.entity.QuestionEntity
 import com.aris.greekcitizenshipquiz.data.remote.dto.QuestionDto
 import com.aris.greekcitizenshipquiz.domain.model.Question
-
+import  com.aris.greekcitizenshipquiz.data.local.relation.QuestionWithDetails
 
 fun QuestionDto.toEntity(): QuestionEntity {
 
@@ -33,39 +33,47 @@ fun QuestionDto.toEntity(): QuestionEntity {
 
         isDeleted = isDeleted,
 
-        createdAt = "",
+        createdAt = createdAt,
 
         updatedAt = updatedAt,
 
         imageAnswer = imageAnswer
     )
 }
-fun QuestionEntity.toDomain(): Question {
+fun QuestionWithDetails.toDomain(): Question {
 
     return Question(
 
-        questionId = questionId,
+        questionId = question.questionId,
 
-        topic = topic,
+        topic = question.topic,
 
-        introText = introText,
+        introText = question.introText,
 
-        mainText = mainText,
+        mainText = question.mainText ?: "",
 
-        textCompletion = textCompletion,
+        textCompletion = question.textCompletion?: "",
 
-        focusCompletion = focusCompletion,
+        focusCompletion = question.focusCompletion ?: "",
 
-        categoryId = categoryId,
+        isNew = question.isNew,
 
-        typeQuestionId = typeQuestionId,
+        maxCorrect = question.maxCorrect,
 
-        questionNumber = questionNumber,
+        categoryId = question.categoryId,
 
-        imageAnswer = imageAnswer,
+        typeQuestionId = question.typeQuestionId,
 
-        isNew = isNew,
+        questionNumber = question.questionNumber,
 
-        maxCorrect = maxCorrect,
+        imageAnswer = question.imageAnswer,
+
+        options = options.map { option ->
+            option.toDomain()
+        },
+
+        images = images.map { image ->
+            image.toDomain()
+        }
     )
 }

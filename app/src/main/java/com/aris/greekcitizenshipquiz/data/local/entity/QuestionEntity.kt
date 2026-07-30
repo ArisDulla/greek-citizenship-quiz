@@ -45,7 +45,7 @@ data class QuestionEntity(
 
     val introText: String?,
 
-    val mainText: String,
+    val mainText: String?,
 
     val textCompletion: String?,
 
@@ -65,7 +65,7 @@ data class QuestionEntity(
 
     val createdAt: String,
 
-    val updatedAt: String,
+    val updatedAt: String?,
 
     val imageAnswer: String?
 )

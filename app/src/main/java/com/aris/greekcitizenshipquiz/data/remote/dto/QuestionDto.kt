@@ -45,5 +45,9 @@ data class QuestionDto(
     val imageAnswer: String?,
 
     @param:Json(name = "updated_at")
-    val updatedAt: String
+    val updatedAt: String,
+
+    @param:Json(name = "created_at")
+    val createdAt: String,
+
 )

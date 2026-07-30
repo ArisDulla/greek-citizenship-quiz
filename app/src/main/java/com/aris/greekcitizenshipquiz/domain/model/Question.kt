@@ -24,6 +24,9 @@ data class Question(
 
     val questionNumber: Int,
 
-    val imageAnswer: String?
+    val imageAnswer: String?,
 
+    val options: List<QuestionOption>,
+
+    val images: List<QuestionImage>
 )

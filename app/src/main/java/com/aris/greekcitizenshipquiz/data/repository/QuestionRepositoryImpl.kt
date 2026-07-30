@@ -16,10 +16,8 @@ class QuestionRepositoryImpl @Inject constructor(
 
         return questionDao
             .getQuestionsByCategory(categoryId)
-            .map { entity ->
+            .map { it.toDomain() }
 
-                entity.toDomain()
-            }
     }
 
     override suspend fun getQuestionsByCategoryAndType(
@@ -38,13 +36,8 @@ class QuestionRepositoryImpl @Inject constructor(
     ): List<Question> {
 
         return questionDao
-            .getRandomQuestionsByCategory(
-                categoryId = categoryId,
-                limit = limit
-            )
-            .map { entity ->
-                entity.toDomain()
-            }
+            .getRandomQuestionsByCategory(categoryId, limit)
+            .map { it.toDomain() }
     }
 
     override suspend fun getQuestionById(

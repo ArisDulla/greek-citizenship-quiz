@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 3,
-    "identityHash": "d22b4a8fe2078ea84c4935ef622ba69d",
+    "version": 6,
+    "identityHash": "054737a61fe578c6ff68ab329c692fd1",
     "entities": [
       {
         "tableName": "category_question",
@@ -292,22 +292,14 @@
         },
         "indices": [
           {
-            "name": "index_question_isNew",
+            "name": "index_question_categoryId_isDeleted",
             "unique": false,
             "columnNames": [
-              "isNew"
+              "categoryId",
+              "isDeleted"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_question_isNew` ON `${TABLE_NAME}` (`isNew`)"
-          },
-          {
-            "name": "index_question_maxCorrect",
-            "unique": false,
-            "columnNames": [
-              "maxCorrect"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_question_maxCorrect` ON `${TABLE_NAME}` (`maxCorrect`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_question_categoryId_isDeleted` ON `${TABLE_NAME}` (`categoryId`, `isDeleted`)"
           },
           {
             "name": "index_question_questionNumber",
@@ -319,14 +311,13 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_question_questionNumber` ON `${TABLE_NAME}` (`questionNumber`)"
           },
           {
-            "name": "index_question_categoryId_isDeleted",
+            "name": "index_question_typeQuestionId",
             "unique": false,
             "columnNames": [
-              "categoryId",
-              "isDeleted"
+              "typeQuestionId"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_question_categoryId_isDeleted` ON `${TABLE_NAME}` (`categoryId`, `isDeleted`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_question_typeQuestionId` ON `${TABLE_NAME}` (`typeQuestionId`)"
           },
           {
             "name": "index_question_createdAt",
@@ -345,24 +336,6 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_question_updatedAt` ON `${TABLE_NAME}` (`updatedAt`)"
-          },
-          {
-            "name": "index_question_categoryId",
-            "unique": false,
-            "columnNames": [
-              "categoryId"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_question_categoryId` ON `${TABLE_NAME}` (`categoryId`)"
-          },
-          {
-            "name": "index_question_typeQuestionId",
-            "unique": false,
-            "columnNames": [
-              "typeQuestionId"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_question_typeQuestionId` ON `${TABLE_NAME}` (`typeQuestionId`)"
           }
         ],
         "foreignKeys": [
@@ -660,7 +633,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd22b4a8fe2078ea84c4935ef622ba69d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '054737a61fe578c6ff68ab329c692fd1')"
     ]
   }
 }
