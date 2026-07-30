@@ -40,14 +40,6 @@ class QuestionRepositoryImpl @Inject constructor(
             .map { it.toDomain() }
     }
 
-    override suspend fun getQuestionById(
-        questionId: Int
-    ): Question? {
-
-        return questionDao
-            .getQuestionById(questionId)
-            ?.toDomain()
-    }
     override suspend fun getQuestionGroupCountByCategory(
         categoryId: Int
     ): Int {

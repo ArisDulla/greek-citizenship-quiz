@@ -9,10 +9,6 @@ interface QuestionRepository {
         limit: Int
     ): List<Question>
 
-    suspend fun getQuestionById(
-        questionId: Int
-    ): Question?
-
     suspend fun getQuestionGroupCountByCategory(
         categoryId: Int
     ): Int

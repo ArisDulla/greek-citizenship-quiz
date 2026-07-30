@@ -57,17 +57,6 @@ interface QuestionDao {
 
     ////////////////////////////////////////////////
 
-    @Transaction
-    @Query("""
-        SELECT *
-        FROM question
-        WHERE questionId = :questionId
-        AND isDeleted = 0
-    """)
-    suspend fun getQuestionById(
-        questionId: Int
-    ): QuestionWithDetails?
-
     @Insert(
         onConflict = OnConflictStrategy.REPLACE
     )
