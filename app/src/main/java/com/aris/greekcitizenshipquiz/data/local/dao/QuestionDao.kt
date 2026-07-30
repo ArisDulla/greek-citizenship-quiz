@@ -103,4 +103,15 @@ interface QuestionDao {
         categoryId: Int,
         typeQuestionId: Int
     ): List<QuestionWithDetails>
+
+    @Transaction
+    @Query("""
+    SELECT *
+    FROM question
+    WHERE isNew = 1
+      AND isDeleted = 0
+    ORDER BY questionNumber ASC, createdAt ASC
+    """)
+    suspend fun getQuestionsByCategoryAndNew(): List<QuestionWithDetails>
+
 }

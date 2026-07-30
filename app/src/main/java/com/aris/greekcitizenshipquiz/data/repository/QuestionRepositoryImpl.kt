@@ -47,4 +47,10 @@ class QuestionRepositoryImpl @Inject constructor(
         return questionDao.getQuestionGroupCountByCategory(categoryId)
     }
 
+    override suspend fun getQuestionsByCategoryAndNew(): List<Question> {
+        return questionDao
+            .getQuestionsByCategoryAndNew()
+            .map { it.toDomain() }
+    }
+
 }

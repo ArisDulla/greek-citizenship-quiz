@@ -21,4 +21,6 @@ interface QuestionRepository {
         categoryId: Int,
         typeQuestionId: Int
     ): List<Question>
+
+    suspend fun getQuestionsByCategoryAndNew(): List<Question>
 }
