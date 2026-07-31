@@ -5,6 +5,7 @@ import com.aris.greekcitizenshipquiz.data.mapper.toDomain
 import com.aris.greekcitizenshipquiz.domain.model.Question
 import com.aris.greekcitizenshipquiz.domain.repository.QuestionRepository
 import javax.inject.Inject
+import com.aris.greekcitizenshipquiz.domain.model.CategoryTypeCount
 
 class QuestionRepositoryImpl @Inject constructor(
     private val questionDao: QuestionDao
@@ -51,6 +52,13 @@ class QuestionRepositoryImpl @Inject constructor(
         return questionDao
             .getQuestionsByCategoryAndNew()
             .map { it.toDomain() }
+    }
+
+    override suspend fun getQuestionTypesByCategory(
+        categoryId: Int
+    ): List<CategoryTypeCount> {
+
+        return questionDao.getQuestionTypesByCategory(categoryId)
     }
 
 }

@@ -25,4 +25,13 @@ class CategoryRepositoryImpl @Inject constructor(
             }
     }
 
+    override suspend fun getCategoryById(
+        categoryId: Int
+    ): CategoryQuestion? {
+
+        return categoryQuestionDao
+            .getCategoryById(categoryId)
+            ?.toDomain()
+    }
+
 }

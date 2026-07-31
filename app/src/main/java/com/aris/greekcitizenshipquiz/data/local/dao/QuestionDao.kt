@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.aris.greekcitizenshipquiz.data.local.entity.QuestionEntity
 import com.aris.greekcitizenshipquiz.data.local.relation.QuestionWithDetails
+import com.aris.greekcitizenshipquiz.domain.model.CategoryTypeCount
 
 @Dao
 interface QuestionDao {
@@ -113,5 +114,32 @@ interface QuestionDao {
     ORDER BY questionNumber ASC, createdAt ASC
     """)
     suspend fun getQuestionsByCategoryAndNew(): List<QuestionWithDetails>
+
+    @Query("""
+SELECT 
+    tq.typeQuestionId,
+    tq.name AS typeName,
+    tq.description,
+    tq.sortOrder,
+    tq.isActive,
+    tq.updatedAt,
+    COUNT(q.questionId) AS count
+FROM question q
+INNER JOIN type_question tq
+    ON q.typeQuestionId = tq.typeQuestionId
+WHERE q.categoryId = :categoryId
+  AND q.isDeleted = 0
+GROUP BY 
+    tq.typeQuestionId,
+    tq.name,
+    tq.description,
+    tq.sortOrder,
+    tq.isActive,
+    tq.updatedAt
+ORDER BY tq.sortOrder ASC
+""")
+    suspend fun getQuestionTypesByCategory(
+        categoryId: Int
+    ): List<CategoryTypeCount>
 
 }

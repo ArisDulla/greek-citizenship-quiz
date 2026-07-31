@@ -6,8 +6,8 @@
     android:tint="@null">
 
     <group
-        android:scaleX="0.75"
-        android:scaleY="0.75"
+        android:scaleX="0.45"
+        android:scaleY="0.45"
         android:pivotX="480"
         android:pivotY="480">
 

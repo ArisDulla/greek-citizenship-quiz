@@ -8,4 +8,7 @@ interface CategoryRepository {
     fun getActiveCategoriesWithQuestions(): Flow<List<CategoryQuestion>>
     // fun getActiveCategoriesWithQuestions(): Flow<List<CategoryQuestionEntity>>
 
+    suspend fun getCategoryById(
+        categoryId: Int
+    ): CategoryQuestion?
 }

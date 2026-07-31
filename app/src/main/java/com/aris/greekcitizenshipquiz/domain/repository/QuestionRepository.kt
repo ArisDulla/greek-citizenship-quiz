@@ -1,5 +1,6 @@
 package com.aris.greekcitizenshipquiz.domain.repository
 
+import com.aris.greekcitizenshipquiz.domain.model.CategoryTypeCount
 import com.aris.greekcitizenshipquiz.domain.model.Question
 
 interface QuestionRepository {
@@ -23,4 +24,9 @@ interface QuestionRepository {
     ): List<Question>
 
     suspend fun getQuestionsByCategoryAndNew(): List<Question>
+
+    suspend fun getQuestionTypesByCategory(
+        categoryId: Int
+    ): List<CategoryTypeCount>
+
 }

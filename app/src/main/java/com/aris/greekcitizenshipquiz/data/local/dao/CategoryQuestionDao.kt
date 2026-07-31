@@ -29,4 +29,15 @@ interface CategoryQuestionDao {
       )
 """)
     fun getActiveCategoriesWithQuestions(): Flow<List<CategoryQuestionEntity>>
+
+    @Query("""
+    SELECT *
+    FROM category_question
+    WHERE categoryId = :categoryId
+""")
+    suspend fun getCategoryById(
+        categoryId: Int
+    ): CategoryQuestionEntity?
+
+
 }

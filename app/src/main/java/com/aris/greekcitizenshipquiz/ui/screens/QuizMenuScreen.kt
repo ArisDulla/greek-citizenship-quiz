@@ -39,6 +39,7 @@ import androidx.compose.material3.CircularProgressIndicator
 fun QuizMenuScreen(
     onHome: () -> Unit,
     onIncorrectAnswers: () -> Unit,
+    onCategoryClick: (Int) -> Unit,
     viewModel: QuizMenuViewModel = hiltViewModel(),
 ) {
     val incorrectCount by viewModel.incorrectCount.collectAsStateWithLifecycle()
@@ -69,7 +70,7 @@ fun QuizMenuScreen(
                             .fillMaxWidth()
                             .height(64.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF455A64)
+                            containerColor = Color(0xFF37474F)
                         ),
                         onClick = onHome
                     ) {
@@ -131,6 +132,25 @@ fun QuizMenuScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(64.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF2E7D32)
+                            ),
+                            onClick = {
+                                // TODO: άνοιγμα νέων ερωτήσεων
+                            }
+                        ) {
+                            Text(
+                                text = "Νέες ερωτήσεις",
+                                fontSize = 20.sp,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                         if (categories.isEmpty()) {
 
                             CircularProgressIndicator(modifier = Modifier.padding(32.dp))
@@ -147,7 +167,7 @@ fun QuizMenuScreen(
                                         containerColor = MaterialTheme.colorScheme.primary
                                     ),
                                     onClick = {
-                                        // category click
+                                        onCategoryClick(category.categoryId)
                                     }
                                 ) {
                                     Text(
