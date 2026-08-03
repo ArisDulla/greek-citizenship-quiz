@@ -142,4 +142,14 @@ ORDER BY tq.sortOrder ASC
         categoryId: Int
     ): List<CategoryTypeCount>
 
+    @Transaction
+    @Query("""
+        SELECT *
+        FROM question
+        WHERE questionId IN (
+            SELECT questionId 
+            FROM incorrect_answers
+        )
+    """)
+    fun observeIncorrectQuestions(): List<QuestionWithDetails>
 }

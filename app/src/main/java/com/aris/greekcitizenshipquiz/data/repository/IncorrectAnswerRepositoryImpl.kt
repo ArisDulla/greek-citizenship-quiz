@@ -6,9 +6,13 @@ import com.aris.greekcitizenshipquiz.domain.repository.IncorrectAnswerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import com.aris.greekcitizenshipquiz.data.mapper.toDomain
+import com.aris.greekcitizenshipquiz.domain.model.Question
+import com.aris.greekcitizenshipquiz.data.local.dao.QuestionDao
 
 class IncorrectAnswerRepositoryImpl @Inject constructor(
-    private val incorrectAnswerDao: IncorrectAnswerDao
+    private val incorrectAnswerDao: IncorrectAnswerDao,
+    private val questionDao: QuestionDao
 ) : IncorrectAnswerRepository {
 
     override suspend fun add(
@@ -42,5 +46,13 @@ class IncorrectAnswerRepositoryImpl @Inject constructor(
     override fun observeCount(): Flow<Int> {
 
         return incorrectAnswerDao.observeCount()
+    }
+
+    override fun observeIncorrectQuestions(): List<Question> {
+
+
+        return questionDao
+            .observeIncorrectQuestions()
+            .map { it.toDomain() }
     }
 }

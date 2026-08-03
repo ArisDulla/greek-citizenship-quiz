@@ -2,7 +2,6 @@ package com.aris.greekcitizenshipquiz.data.remote.util
 
 import android.util.Log
 import java.io.File
-import java.nio.charset.StandardCharsets
 import java.util.zip.ZipInputStream
 
 
@@ -10,7 +9,8 @@ object ZipExtractor {
 
 
     fun extractZip(
-        zipFile: File
+        zipFile: File,
+        outputDir: File
     ): Map<String, String> {
 
 
@@ -34,23 +34,55 @@ object ZipExtractor {
                 )
 
 
-                if (!entry.isDirectory &&
-                    entry.name.endsWith(".json", ignoreCase = true)
-                ) {
+                if (!entry.isDirectory) {
 
 
-                    val content =
-                        zipInputStream
-                            .readBytes()
-                            .toString(Charsets.UTF_8)
+                    when {
 
 
-                    files[entry.name] = content
+                        entry.name.endsWith(".json", ignoreCase = true) -> {
+
+
+                            val content =
+                                zipInputStream
+                                    .readBytes()
+                                    .toString(Charsets.UTF_8)
+
+
+                            files[entry.name] = content
+                        }
+
+
+                        entry.name.startsWith("images/") &&
+                                entry.name.endsWith(".png", ignoreCase = true) -> {
+
+                            val outputFile = File(outputDir, entry.name)
+
+                            val canonicalOutputDir = outputDir.canonicalPath
+                            val canonicalOutputFile = outputFile.canonicalPath
+
+                            require(
+                                canonicalOutputFile.startsWith(canonicalOutputDir + File.separator)
+                            ) {
+                                "Invalid ZIP entry: ${entry.name}"
+                            }
+
+                            outputFile.parentFile?.mkdirs()
+
+                            outputFile.outputStream().use { output ->
+                                zipInputStream.copyTo(output)
+                            }
+
+                            Log.d(
+                                "ZIP",
+                                "IMAGE SAVED = ${outputFile.absolutePath}"
+                            )
+                        }
+                    }
                 }
 
 
                 zipInputStream.closeEntry()
-
 
                 entry = zipInputStream.nextEntry
             }

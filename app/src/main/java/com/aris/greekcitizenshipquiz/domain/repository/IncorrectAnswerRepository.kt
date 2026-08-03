@@ -1,5 +1,6 @@
 package com.aris.greekcitizenshipquiz.domain.repository
 
+import com.aris.greekcitizenshipquiz.domain.model.Question
 import kotlinx.coroutines.flow.Flow
 
 interface IncorrectAnswerRepository {
@@ -17,4 +18,6 @@ interface IncorrectAnswerRepository {
     suspend fun removeAll()
 
     fun observeCount(): Flow<Int>
+
+    fun observeIncorrectQuestions(): List<Question>
 }

@@ -38,11 +38,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aris.greekcitizenshipquiz.ui.components.AllQuestionsButton
 import com.aris.greekcitizenshipquiz.ui.components.CategoryHeader
 import com.aris.greekcitizenshipquiz.ui.state.TypesUiState
-
+import com.aris.greekcitizenshipquiz.ui.model.QuestionSource
 @Composable
 fun CategoryTypesScreen(
     onMenu: () -> Unit,
     categoryId: Int,
+    onOpenQuestions: (QuestionSource) -> Unit,
     viewModel: CategoryTypesViewModel = hiltViewModel()
 ) {
 
@@ -134,7 +135,11 @@ fun CategoryTypesScreen(
 
                                     AllQuestionsButton(
                                         onClick = {
-                                            // TODO: άνοιγμα quiz με όλες τις ερωτήσεις
+                                            onOpenQuestions(
+                                                QuestionSource.Category(
+                                                    categoryId = categoryId
+                                                )
+                                            )
                                         }
                                     )
 
@@ -151,7 +156,12 @@ fun CategoryTypesScreen(
                                             ),
 
                                             onClick = {
-                                                // type.typeQuestionId
+                                                onOpenQuestions(
+                                                    QuestionSource.CategoryType(
+                                                        categoryId = categoryId,
+                                                        typeQuestionId= type.typeQuestionId
+                                                    )
+                                                )
                                             }
 
                                         ) {

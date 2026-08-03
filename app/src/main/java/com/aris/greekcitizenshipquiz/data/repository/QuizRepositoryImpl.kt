@@ -28,6 +28,8 @@ import android.util.Log
 import com.aris.greekcitizenshipquiz.data.remote.error.SyncException
 import com.aris.greekcitizenshipquiz.domain.repository.QuizRepository
 import com.aris.greekcitizenshipquiz.domain.model.SyncResult
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Singleton
 class QuizRepositoryImpl @Inject constructor(
@@ -51,6 +53,9 @@ class QuizRepositoryImpl @Inject constructor(
     private val examPeriodDao: ExamPeriodDao,
 
     private val syncMetaDao: SyncMetaDao,
+
+    @param:ApplicationContext
+    private val context: Context
 
 ) : QuizRepository {
 
@@ -94,7 +99,7 @@ class QuizRepositoryImpl @Inject constructor(
 
             // 4. Extract JSON files from ZIP
             val files =
-                ZipExtractor.extractZip(zipFile)
+                ZipExtractor.extractZip(zipFile,outputDir = context.filesDir)
 
             // 5. Parse JSON files into DTO objects -----------------------------
             val versionJson =
