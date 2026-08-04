@@ -30,7 +30,7 @@ fun QuestionsScreen(
     source: QuestionSource,
     viewModel: QuestionsViewModel = hiltViewModel(),
     onIncorrectAnswers: () -> Unit,
-    onMenu: () -> Unit,
+    onBackTo: () -> Unit
 ) {
 
     val currentIndex by viewModel.currentIndex
@@ -128,17 +128,17 @@ fun QuestionsScreen(
                         )
                     }
                 }
+
                 Spacer(
                     modifier = Modifier.height(12.dp)
                 )
-
 
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp),
 
-                    onClick = onMenu
+                    onClick = onBackTo
                 ) {
 
                     Text(

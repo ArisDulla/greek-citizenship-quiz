@@ -18,6 +18,7 @@ private const val CATEGORY_TYPES_SCREEN = "$CATEGORY_TYPES_ROUTE/{categoryId}"
 private const val QUESTIONS_SCREEN = "questions/{categoryId}/{typeQuestionId}"
 
 private const val INCORRECT_QUESTIONS_SCREEN = "incorrect_questions"
+private const val NEW_QUESTIONS_SCREEN = "questions_new"
 
 private fun questionsRoute(
     categoryId: Int,
@@ -106,7 +107,10 @@ fun NavGraph() {
                     }
 
                 },
-                onMenu = { openMenu() }
+
+                onBackTo = {
+                    navController.popBackStack()
+                }
 
             )
         }
@@ -171,7 +175,9 @@ fun NavGraph() {
                     // Not available in incorrect mode
                 },
 
-                onMenu = { openMenu() }
+                onBackTo = {
+                    navController.popBackStack()
+                }
             )
         }
 
@@ -215,6 +221,35 @@ fun NavGraph() {
                     ){
                         launchSingleTop = true
                     }
+                },
+                onNewQuestions = {
+                    navController.navigate(
+                        "questions_new"
+                    )
+                }
+            )
+        }
+        composable(
+            route = NEW_QUESTIONS_SCREEN
+        ) {
+
+            QuestionsScreen(
+
+                source = QuestionSource.NewQuestions,
+
+                onIncorrectAnswers = {
+
+                    navController.navigate(INCORRECT_QUESTIONS_SCREEN) {
+                        popUpTo(QUIZ_MENU_SCREEN) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+
+                },
+
+                onBackTo = {
+                    navController.popBackStack()
                 }
             )
         }

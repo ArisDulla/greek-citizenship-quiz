@@ -41,6 +41,7 @@ fun QuizMenuScreen(
     onIncorrectAnswers: () -> Unit,
     onCategoryClick: (Int) -> Unit,
     viewModel: QuizMenuViewModel = hiltViewModel(),
+    onNewQuestions: () -> Unit
 ) {
     val incorrectCount by viewModel.incorrectCount.collectAsStateWithLifecycle()
     val categories by viewModel.categories.collectAsStateWithLifecycle()
@@ -140,9 +141,7 @@ fun QuizMenuScreen(
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFF2E7D32)
                             ),
-                            onClick = {
-                                // TODO: άνοιγμα νέων ερωτήσεων
-                            }
+                            onClick = onNewQuestions
                         ) {
                             Text(
                                 text = "Νέες ερωτήσεις",

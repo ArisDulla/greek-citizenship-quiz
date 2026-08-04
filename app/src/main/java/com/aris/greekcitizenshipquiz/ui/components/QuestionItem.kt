@@ -11,15 +11,19 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.aris.greekcitizenshipquiz.domain.model.Question
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Icon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import com.aris.greekcitizenshipquiz.data.util.isValidText
 import com.aris.greekcitizenshipquiz.domain.model.QuestionOption
 import com.aris.greekcitizenshipquiz.ui.model.AnswerState
+
+
 @Composable
 fun QuestionItem(
     question: Question,
@@ -83,25 +87,38 @@ fun QuestionItem(
 
             if (question.isNew) {
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                Surface(
+                    shape = RoundedCornerShape(50.dp),
+                    color = Color(0xFFE8F5E9)
                 ) {
 
-                    Icon(
-                        imageVector = Icons.Default.Verified,
-                        contentDescription = null,
-                        tint = Color(0xFF2E7D32)
-                    )
+                    Row(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = 12.dp,
+                                vertical = 6.dp
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
-                    Spacer(
-                        modifier = Modifier.width(6.dp)
-                    )
+                        Icon(
+                            imageVector = Icons.Default.Verified,
+                            contentDescription = null,
+                            tint = Color(0xFF1B5E20),
+                            modifier = Modifier.size(22.dp)
+                        )
 
-                    Text(
-                        text = "Νέα ερώτηση",
-                        fontSize = 16.sp,
-                        color = Color(0xFF2E7D32)
-                    )
+                        Spacer(
+                            modifier = Modifier.width(6.dp)
+                        )
+
+                        Text(
+                            text = "Νέα ερώτηση",
+                            fontSize = 16.sp,
+                            color = Color(0xFF1B5E20),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
 
@@ -160,6 +177,13 @@ fun QuestionItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .defaultMinSize(minHeight = 60.dp),
+
+                    shape = RoundedCornerShape(12.dp),
+
+                    contentPadding = PaddingValues(
+                        horizontal = 20.dp,
+                        vertical = 12.dp
+                    ),
 
                     enabled = answerState == AnswerState.NONE,
 
