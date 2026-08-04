@@ -17,44 +17,65 @@ private const val CATEGORY_TYPES_SCREEN = "$CATEGORY_TYPES_ROUTE/{categoryId}"
 
 private const val QUESTIONS_SCREEN = "questions/{categoryId}/{typeQuestionId}"
 
+private const val INCORRECT_QUESTIONS_SCREEN = "incorrect_questions"
+
+private fun questionsRoute(
+    categoryId: Int,
+    typeQuestionId: Int
+) = "questions/$categoryId/$typeQuestionId"
+
+private fun categoryTypesRoute(
+    categoryId: Int
+) = "$CATEGORY_TYPES_ROUTE/$categoryId"
+
 @Composable
 fun NavGraph() {
 
     val navController = rememberNavController()
 
+    fun openMenu() {
+        navController.navigate(QUIZ_MENU_SCREEN) {
+            popUpTo(QUIZ_MENU_SCREEN) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
+    }
 
     NavHost(
         navController = navController,
         startDestination = HOME_SCREEN
     ) {
 
-
+        //
+        // HOME SCREEN
+        //
         composable(
             route = HOME_SCREEN
         ) {
 
             QuizScreen(
                 onOpenMenu = {
-                    navController.navigate(QUIZ_MENU_SCREEN)
+                    navController.navigate(QUIZ_MENU_SCREEN) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
+
         composable(
             route = QUESTIONS_SCREEN
         ) { backStackEntry ->
 
 
-            val categoryId =
-                backStackEntry.arguments
-                    ?.getString("categoryId")
-                    ?.toInt() ?: 0
+            val categoryId = requireNotNull(
+                backStackEntry.arguments?.getString("categoryId")
+            ).toInt()
 
 
-            val typeQuestionId =
-                backStackEntry.arguments
-                    ?.getString("typeQuestionId")
-                    ?.toInt() ?: 0
-
+            val typeQuestionId = requireNotNull(
+                backStackEntry.arguments?.getString("typeQuestionId")
+            ).toInt()
 
 
             QuestionsScreen(
@@ -73,7 +94,19 @@ fun NavGraph() {
                             categoryId = categoryId
                         )
 
+                    },
+
+                onIncorrectAnswers = {
+
+                    navController.navigate(INCORRECT_QUESTIONS_SCREEN) {
+                        popUpTo(QUIZ_MENU_SCREEN) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
                     }
+
+                },
+                onMenu = { openMenu() }
 
             )
         }
@@ -82,10 +115,9 @@ fun NavGraph() {
             route = CATEGORY_TYPES_SCREEN
         ) { backStackEntry ->
 
-            val categoryId =
-                backStackEntry.arguments
-                    ?.getString("categoryId")
-                    ?.toInt() ?: 0
+            val categoryId = requireNotNull(
+                backStackEntry.arguments?.getString("categoryId")
+            ).toInt()
 
             CategoryTypesScreen(
                 categoryId = categoryId,
@@ -96,8 +128,14 @@ fun NavGraph() {
 
                         is QuestionSource.CategoryType -> {
 
+                            //
+                            // Questions Types
+                            //
                             navController.navigate(
-                                "questions/${source.categoryId}/${source.typeQuestionId}"
+                                questionsRoute(
+                                    source.categoryId,
+                                    source.typeQuestionId
+                                )
                             )
 
                         }
@@ -105,7 +143,10 @@ fun NavGraph() {
                         is QuestionSource.Category -> {
 
                             navController.navigate(
-                                "questions/${source.categoryId}/0"
+                                questionsRoute(
+                                    source.categoryId,
+                                    0
+                                )
                             )
 
                         }
@@ -114,43 +155,66 @@ fun NavGraph() {
                     }
                 },
 
-                onMenu = {
-                    navController.navigate(QUIZ_MENU_SCREEN) {
-
-                        popUpTo(QUIZ_MENU_SCREEN) {
-                            inclusive = false
-                        }
-
-                        launchSingleTop = true
-                    }
-                }
+                onMenu = { openMenu() }
 
             )
         }
 
+        composable(
+            route = INCORRECT_QUESTIONS_SCREEN
+        ) {
 
+            QuestionsScreen(
+                source = QuestionSource.Incorrect,
+
+                onIncorrectAnswers = {
+                    // Not available in incorrect mode
+                },
+
+                onMenu = { openMenu() }
+            )
+        }
+
+        //
+        // Quiz Menu Screen
+        //
         composable(
             route = QUIZ_MENU_SCREEN
         ) {
 
             QuizMenuScreen(
-                onHome = {
-                    navController.navigate(HOME_SCREEN) {
 
-                        popUpTo(HOME_SCREEN) {
-                            inclusive = true
-                        }
+                //
+                // ΗΟΜΕ
+                //
+                onHome = {
+                navController.popBackStack(
+                    HOME_SCREEN,
+                    false
+                )
+                },
+
+                //
+                // Incorrect Questions
+                //
+                onIncorrectAnswers = {
+                    navController.navigate(
+                        INCORRECT_QUESTIONS_SCREEN
+                    ){
 
                         launchSingleTop = true
                     }
                 },
 
-                onIncorrectAnswers = {
-                    // navController.navigate(INCORRECT_ANSWERS_SCREEN)
-                },
-
+                //
+                // Category Questions
+                //
                 onCategoryClick = { categoryId ->
-                    navController.navigate("$CATEGORY_TYPES_ROUTE/$categoryId")
+                    navController.navigate(
+                        categoryTypesRoute(categoryId)
+                    ){
+                        launchSingleTop = true
+                    }
                 }
             )
         }

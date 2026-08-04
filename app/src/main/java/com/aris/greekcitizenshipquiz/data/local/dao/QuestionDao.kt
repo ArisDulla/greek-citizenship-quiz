@@ -151,5 +151,5 @@ ORDER BY tq.sortOrder ASC
             FROM incorrect_answers
         )
     """)
-    fun observeIncorrectQuestions(): List<QuestionWithDetails>
+    suspend fun observeIncorrectQuestions(): List<QuestionWithDetails>
 }

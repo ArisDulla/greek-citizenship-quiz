@@ -19,5 +19,5 @@ interface IncorrectAnswerRepository {
 
     fun observeCount(): Flow<Int>
 
-    fun observeIncorrectQuestions(): List<Question>
+    suspend fun observeIncorrectQuestions(): List<Question>
 }

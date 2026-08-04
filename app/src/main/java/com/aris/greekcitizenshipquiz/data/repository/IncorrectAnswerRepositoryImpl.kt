@@ -48,7 +48,7 @@ class IncorrectAnswerRepositoryImpl @Inject constructor(
         return incorrectAnswerDao.observeCount()
     }
 
-    override fun observeIncorrectQuestions(): List<Question> {
+    override suspend fun observeIncorrectQuestions(): List<Question> {
 
 
         return questionDao

@@ -2,7 +2,14 @@ package com.aris.greekcitizenshipquiz.ui.model
 
 sealed interface QuestionSource {
 
-    data object Incorrect : QuestionSource
+    val isIncorrectMode: Boolean
+        get() = false
+
+
+    data object Incorrect : QuestionSource {
+        override val isIncorrectMode = true
+    }
+
 
     data object NewQuestions : QuestionSource
 

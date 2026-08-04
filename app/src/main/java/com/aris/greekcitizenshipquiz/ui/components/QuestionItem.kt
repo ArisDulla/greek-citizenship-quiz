@@ -18,10 +18,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import com.aris.greekcitizenshipquiz.data.util.isValidText
-
+import com.aris.greekcitizenshipquiz.domain.model.QuestionOption
+import com.aris.greekcitizenshipquiz.ui.model.AnswerState
 @Composable
 fun QuestionItem(
-    question: Question
+    question: Question,
+    answerState: AnswerState,
+    selectedOptionId: Int?,
+    onOptionSelected: (QuestionOption) -> Unit,
+
 ) {
 
     val context = LocalContext.current
@@ -41,12 +46,23 @@ fun QuestionItem(
             )
         }
 
+    val cardColor = when (answerState) {
+
+        AnswerState.NONE ->
+            Color.White.copy(alpha = 0.50f)
+
+        AnswerState.CORRECT ->
+            Color(0xFFC8E6C9)
+
+        AnswerState.INCORRECT ->
+            Color(0xFFFFCDD2)
+    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.50f)
+            containerColor = cardColor
         ),
         border = BorderStroke(
             1.dp,
@@ -125,6 +141,19 @@ fun QuestionItem(
             // Επιλογές
             question.options.forEach { option ->
 
+                val optionColor = when {
+
+                    option.optionId == selectedOptionId &&
+                            answerState == AnswerState.INCORRECT ->
+                        Color(0xFFE53935)
+
+                    option.isCorrect &&
+                            answerState != AnswerState.NONE ->
+                        Color(0xFF4CAF50)
+
+                    else ->
+                        Color.White
+                }
 
                 Button(
 
@@ -132,14 +161,17 @@ fun QuestionItem(
                         .fillMaxWidth()
                         .defaultMinSize(minHeight = 60.dp),
 
+                    enabled = answerState == AnswerState.NONE,
 
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
-                        contentColor = Color.DarkGray
+                        contentColor = Color.Black,
+                        disabledContainerColor = optionColor,
+                        disabledContentColor = Color.Black
                     ),
 
                     onClick = {
-                        // επιλογή απάντησης
+                        onOptionSelected(option)
                     }
                 ) {
                         option.optionText

@@ -7,7 +7,7 @@ class ObserveIncorrectQuestionsUseCase @Inject constructor(
     private val repository: IncorrectAnswerRepository
 ) {
 
-    operator fun invoke(): List<Question> {
+    suspend operator fun invoke(): List<Question> {
         return repository.observeIncorrectQuestions()
     }
 }
