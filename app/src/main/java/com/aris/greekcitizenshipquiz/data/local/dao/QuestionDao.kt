@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.aris.greekcitizenshipquiz.data.local.entity.QuestionEntity
 import com.aris.greekcitizenshipquiz.data.local.relation.QuestionWithDetails
 import com.aris.greekcitizenshipquiz.domain.model.CategoryTypeCount
@@ -59,9 +60,14 @@ interface QuestionDao {
     ////////////////////////////////////////////////
 
     @Insert(
-        onConflict = OnConflictStrategy.REPLACE
+        onConflict = OnConflictStrategy.IGNORE
     )
     suspend fun insertAll(
+        questions: List<QuestionEntity>
+    )
+
+    @Update
+    suspend fun updateAll(
         questions: List<QuestionEntity>
     )
 

@@ -2,6 +2,7 @@ package com.aris.greekcitizenshipquiz.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material3.Surface
+import com.aris.greekcitizenshipquiz.ui.model.AnswerState
 
 @Composable
 fun QuestionsScreen(
@@ -44,6 +47,10 @@ fun QuestionsScreen(
     val selectedOptionId by viewModel.selectedOptionId
         .collectAsStateWithLifecycle()
 
+    val textAnswers by viewModel.textAnswers.collectAsStateWithLifecycle()
+
+    val textAnswerResults by viewModel.textAnswerResults
+        .collectAsStateWithLifecycle()
 
     val isFinished by viewModel.isFinished.collectAsStateWithLifecycle()
 
@@ -175,7 +182,7 @@ fun QuestionsScreen(
 
                             contentPadding = PaddingValues(
                                 top = 70.dp,
-                                bottom = 70.dp
+                                bottom = 480.dp
                             ),
 
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -183,9 +190,21 @@ fun QuestionsScreen(
                         ) {
                             item {
 
-                                Text(
-                                    text = "${currentIndex + 1} / ${state.questions.size}"
-                                )
+                                Surface(
+                                    shape = RoundedCornerShape(50.dp),
+                                    color = Color.White.copy(alpha = 0.70f)
+                                ) {
+
+                                    Text(
+                                        text = "${currentIndex + 1} / ${state.questions.size}",
+                                        fontSize = 18.sp,
+                                        modifier = Modifier
+                                            .padding(
+                                                horizontal = 20.dp,
+                                                vertical = 8.dp
+                                            )
+                                    )
+                                }
                             }
 
                             item {
@@ -195,6 +214,18 @@ fun QuestionsScreen(
                                         question = it,
                                         answerState = answerState,
                                         selectedOptionId = selectedOptionId,
+                                        textAnswers = textAnswers,
+                                        textAnswerResults = textAnswerResults,
+
+                                        onTextAnswerChanged = { index, value ->
+                                            viewModel.updateTextAnswer(
+                                                index,
+                                                value
+                                            )
+                                        },
+                                        onCheckTextAnswers = {
+                                            viewModel.checkTextAnswers(it)
+                                        },
                                         onOptionSelected = { option ->
                                             viewModel.checkAnswer(
                                                 option = option,
@@ -206,37 +237,39 @@ fun QuestionsScreen(
 
                                 }
                             }
+                            if (answerState == AnswerState.CORRECT ||
+                                answerState == AnswerState.INCORRECT) {
+                                item {
+                                    Button(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(60.dp),
 
-                            item {
-                                Button(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(60.dp),
+                                        onClick = {
 
-                                    onClick = {
+                                            if (currentIndex == state.questions.lastIndex) {
 
-                                        if (currentIndex == state.questions.lastIndex) {
+                                                viewModel.finishQuiz()
 
-                                            viewModel.finishQuiz()
+                                            } else {
 
-                                        } else {
+                                                viewModel.nextQuestion()
 
-                                            viewModel.nextQuestion()
+                                            }
 
                                         }
 
+                                    ) {
+
+                                        Text(
+                                            text =
+                                                if (currentIndex == state.questions.lastIndex)
+                                                    "Τέλος"
+                                                else
+                                                    "Επόμενη"
+                                        )
+
                                     }
-
-                                ) {
-
-                                    Text(
-                                        text =
-                                            if (currentIndex == state.questions.lastIndex)
-                                                "Τέλος"
-                                            else
-                                                "Επόμενη"
-                                    )
-
                                 }
                             }
                         }

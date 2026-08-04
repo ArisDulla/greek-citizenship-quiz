@@ -22,7 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import com.aris.greekcitizenshipquiz.data.util.isValidText
 import com.aris.greekcitizenshipquiz.domain.model.QuestionOption
 import com.aris.greekcitizenshipquiz.ui.model.AnswerState
-
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.remember
 
 @Composable
 fun QuestionItem(
@@ -30,7 +36,10 @@ fun QuestionItem(
     answerState: AnswerState,
     selectedOptionId: Int?,
     onOptionSelected: (QuestionOption) -> Unit,
-
+    textAnswers: List<String>,
+    onTextAnswerChanged: (Int, String) -> Unit,
+    textAnswerResults: List<Boolean?>,
+    onCheckTextAnswers: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -61,6 +70,14 @@ fun QuestionItem(
         AnswerState.INCORRECT ->
             Color(0xFFFFCDD2)
     }
+
+    val focusRequesters = remember(textAnswers.size) {
+        List(textAnswers.size) {
+            FocusRequester()
+        }
+    }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -154,26 +171,107 @@ fun QuestionItem(
                         fontSize = 22.sp
                     )
                 }
+            val checked = textAnswerResults.any { it != null }
+            if (question.isTextAnswer) {
 
-            // Επιλογές
-            question.options.forEach { option ->
+                textAnswers.forEachIndexed { index, answer ->
 
-                val optionColor = when {
 
-                    option.optionId == selectedOptionId &&
-                            answerState == AnswerState.INCORRECT ->
-                        Color(0xFFE53935)
+                    Column {
 
-                    option.isCorrect &&
-                            answerState != AnswerState.NONE ->
-                        Color(0xFF4CAF50)
+                        val result = textAnswerResults.getOrNull(index)
 
-                    else ->
-                        Color.White
+                        val fieldColor = when(result) {
+                            true -> Color(0xFFE8F5E9)
+                            false -> Color(0xFFFFEBEE)
+                            null -> Color.White
+                        }
+
+                        val borderColor = when(result) {
+                            true -> Color(0xFF2E7D32)
+                            false -> Color(0xFFC62828)
+                            null -> MaterialTheme.colorScheme.outline
+                        }
+
+                        TextField(
+                            value = answer,
+                            singleLine = true,
+                            onValueChange = {
+                                onTextAnswerChanged(index, it)
+                            },
+                            placeholder = {
+                                Text("Απάντηση ${index + 1}")
+                            },
+                            readOnly = checked,
+
+                            colors = TextFieldDefaults.colors(
+
+                                focusedIndicatorColor = borderColor,
+
+                                unfocusedIndicatorColor = borderColor,
+
+                                cursorColor = borderColor,
+
+                                focusedContainerColor = fieldColor ,
+
+                                unfocusedContainerColor = fieldColor
+                            ),
+
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequesters[index]),
+
+                            keyboardOptions = KeyboardOptions(
+                                imeAction =
+                                    if (index < textAnswers.size - 1)
+                                        ImeAction.Next
+                                    else
+                                        ImeAction.Done
+                            ),
+
+                            keyboardActions = KeyboardActions(
+
+                                onNext = {
+                                    if (index < focusRequesters.lastIndex) {
+                                        focusRequesters[index + 1].requestFocus()
+                                    }
+                                },
+
+                                onDone = {
+                                    keyboardController?.hide()
+                                    focusRequesters[index].freeFocus()
+                                }
+                            )
+                        )
+
+
+                        when(result) {
+
+                            true -> {
+                                Text(
+                                    text = "✅ Σωστό",
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF2E7D32)
+                                )
+                            }
+
+
+                            false -> {
+                                Text(
+                                    text = "❌ Λάθος",
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFFC62828)
+                                )
+                            }
+
+
+                            null -> {}
+                        }
+
+                    }
                 }
-
+                if (!checked) {
                 Button(
-
                     modifier = Modifier
                         .fillMaxWidth()
                         .defaultMinSize(minHeight = 60.dp),
@@ -184,20 +282,96 @@ fun QuestionItem(
                         horizontal = 20.dp,
                         vertical = 12.dp
                     ),
-
-                    enabled = answerState == AnswerState.NONE,
-
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black,
-                        disabledContainerColor = optionColor,
-                        disabledContentColor = Color.Black
-                    ),
-
                     onClick = {
-                        onOptionSelected(option)
+
+                        keyboardController?.hide()
+
+                        focusRequesters.forEach {
+                            it.freeFocus()
+                        }
+
+                        onCheckTextAnswers()
                     }
                 ) {
+
+                    Text(
+                        text = "Έλεγχος",
+                        fontSize = 18.sp
+                    )
+                }
+                }
+
+                if (checked && textAnswerResults.any { it == false }) {
+
+                    Text(
+                        text = "Σωστές απαντήσεις:",
+                        fontSize = 18.sp,
+                        color = Color(0xFF2E7D32)
+                    )
+
+                    question.options
+                        .filter { it.isCorrect }
+                        .forEach { option ->
+
+                            Text(
+                                text = "• ${option.optionText}",
+                                fontSize = 16.sp,
+                                color = Color(0xFF2E7D32)
+                            )
+                        }
+
+                    Spacer(
+                        modifier = Modifier.height(7.dp)
+                    )
+                }
+
+
+            } else {
+
+
+                // Επιλογές
+                question.options.forEach { option ->
+
+                    val optionColor = when {
+
+                        option.optionId == selectedOptionId &&
+                                answerState == AnswerState.INCORRECT ->
+                            Color(0xFFE53935)
+
+                        option.isCorrect &&
+                                answerState != AnswerState.NONE ->
+                            Color(0xFF4CAF50)
+
+                        else ->
+                            Color.White
+                    }
+
+                    Button(
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .defaultMinSize(minHeight = 60.dp),
+
+                        shape = RoundedCornerShape(12.dp),
+
+                        contentPadding = PaddingValues(
+                            horizontal = 20.dp,
+                            vertical = 12.dp
+                        ),
+
+                        enabled = answerState == AnswerState.NONE,
+
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black,
+                            disabledContainerColor = optionColor,
+                            disabledContentColor = Color.Black
+                        ),
+
+                        onClick = {
+                            onOptionSelected(option)
+                        }
+                    ) {
                         option.optionText
                             ?.let {
 
@@ -206,6 +380,7 @@ fun QuestionItem(
                                     fontSize = 18.sp
                                 )
                             }
+                    }
                 }
             }
         }

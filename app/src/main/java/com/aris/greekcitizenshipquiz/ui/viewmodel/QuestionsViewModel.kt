@@ -18,6 +18,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.aris.greekcitizenshipquiz.ui.model.AnswerState
 import kotlinx.coroutines.Job
+import com.aris.greekcitizenshipquiz.domain.model.Question
+import com.aris.greekcitizenshipquiz.data.util.AnswerNormalizer
+
 @HiltViewModel
 class QuestionsViewModel @Inject constructor(
 
@@ -53,6 +56,11 @@ class QuestionsViewModel @Inject constructor(
     private var currentSource: QuestionSource? = null
     private var loadJob: Job? = null
 
+    private var questions: List<Question> = emptyList()
+
+    private val currentQuestion: Question?
+        get() = questions.getOrNull(_currentIndex.value)
+
     private val _answerState = MutableStateFlow(
         AnswerState.NONE
     )
@@ -63,6 +71,16 @@ class QuestionsViewModel @Inject constructor(
 
 
     val selectedOptionId = _selectedOptionId.asStateFlow()
+
+    private val _textAnswers = MutableStateFlow<List<String>>(emptyList())
+
+    val textAnswers = _textAnswers.asStateFlow()
+
+    private val _textAnswerResults =
+        MutableStateFlow<List<Boolean?>>(emptyList())
+
+    val textAnswerResults =
+        _textAnswerResults.asStateFlow()
 
     private val _score = MutableStateFlow(0)
 
@@ -78,13 +96,77 @@ class QuestionsViewModel @Inject constructor(
             _currentIndex.value++
             _answerState.value = AnswerState.NONE
             _selectedOptionId.value = null
+
+            _textAnswers.value = List(
+                (currentQuestion?.maxCorrect ?: 0).coerceAtLeast(1)
+            ) { "" }
+
+
+            _textAnswerResults.value =
+                List(
+                    (currentQuestion?.maxCorrect ?: 0).coerceAtLeast(1)
+                ) { null }
         }else {
 
             _isFinished.value = true
         }
 
     }
+    fun checkTextAnswers(question: Question) {
 
+        val remainingAnswers = question.options
+            .filter { it.isCorrect }
+            .mapNotNull { it.optionText }
+            .map { AnswerNormalizer.normalize(it) }
+            .toMutableList()
+
+        val results = _textAnswers.value.map { answer ->
+
+            val normalized = AnswerNormalizer.normalize(answer)
+
+            if (remainingAnswers.contains(normalized)) {
+                remainingAnswers.remove(normalized) // χρησιμοποιήθηκε ήδη
+                true
+            } else {
+                false
+            }
+        }
+        _textAnswers.value = _textAnswers.value.mapIndexed { index, answer ->
+            if (results.getOrNull(index) == false) {
+                ""
+            } else {
+                answer
+            }
+        }
+
+        _textAnswerResults.value = results
+
+        val isCorrect =
+            results.isNotEmpty() &&
+                    results.all { it }
+
+        viewModelScope.launch {
+
+
+            if (isCorrect) {
+
+                if (currentSource?.isIncorrectMode == true) {
+                    removeIncorrectAnswerUseCase(question.questionId)
+                }
+
+            } else {
+
+                addIncorrectAnswerUseCase(question.questionId)
+            }
+        }
+
+        if (isCorrect) {
+            _score.value++
+            _answerState.value = AnswerState.CORRECT
+        } else {
+            _answerState.value = AnswerState.INCORRECT
+        }
+    }
     fun checkAnswer(
         option: QuestionOption,
         questionId: Int
@@ -149,6 +231,10 @@ class QuestionsViewModel @Inject constructor(
         _selectedOptionId.value = null
         _score.value = 0
         _isFinished.value = false
+        _textAnswers.value = emptyList()
+        _textAnswerResults.value = emptyList()
+
+        this@QuestionsViewModel.questions = emptyList()
 
 
         loadJob = viewModelScope.launch {
@@ -190,8 +276,18 @@ class QuestionsViewModel @Inject constructor(
                         )
                     }
                 }
+                this@QuestionsViewModel.questions = questions
 
                 _totalQuestions.value = questions.size
+
+                _textAnswers.value =
+                    List(
+                        (questions.firstOrNull()?.maxCorrect ?: 0).coerceAtLeast(1)
+                    ) { "" }
+                _textAnswerResults.value =
+                    List(
+                        (questions.firstOrNull()?.maxCorrect ?: 0).coerceAtLeast(1)
+                    ) { null }
 
                 if (questions.isEmpty()) {
 
@@ -218,6 +314,18 @@ class QuestionsViewModel @Inject constructor(
                     )
             }
         }
+    }
+
+    fun updateTextAnswer(
+        index: Int,
+        value: String
+    ) {
+
+        val current = _textAnswers.value.toMutableList()
+
+        current[index] = value
+
+        _textAnswers.value = current
     }
     override fun onCleared() {
         loadJob?.cancel()

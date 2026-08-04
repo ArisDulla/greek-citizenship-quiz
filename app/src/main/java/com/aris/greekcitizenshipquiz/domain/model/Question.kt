@@ -29,4 +29,11 @@ data class Question(
     val options: List<QuestionOption>,
 
     val images: List<QuestionImage>
-)
+
+) {
+
+    val isTextAnswer: Boolean
+        get() = typeQuestionId == 7 ||
+                typeQuestionId == 8 ||
+                typeQuestionId == 10
+}

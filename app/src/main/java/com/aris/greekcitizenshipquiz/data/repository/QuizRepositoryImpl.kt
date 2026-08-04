@@ -247,11 +247,11 @@ class QuizRepositoryImpl @Inject constructor(
                 )
 
 
-                questionDao.insertAll(
-                    questions.map {
-                        it.toEntity()
-                    }
-                )
+                val entities = questions.map { it.toEntity() }
+
+                questionDao.insertAll(entities)
+
+                questionDao.updateAll(entities)
 
 
                 questionOptionDao.insertAll(
