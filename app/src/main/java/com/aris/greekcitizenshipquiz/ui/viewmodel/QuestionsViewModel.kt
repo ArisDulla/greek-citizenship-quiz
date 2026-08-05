@@ -293,7 +293,7 @@ class QuestionsViewModel @Inject constructor(
 
                     _uiState.value =
                         QuestionsUiState.Empty(
-                            message = "Δεν βρέθηκαν ερωτήσεις"
+                            message = "Συγχαρητήρια! Δεν έχεις καμία λάθος απάντηση."
                         )
 
                 } else {

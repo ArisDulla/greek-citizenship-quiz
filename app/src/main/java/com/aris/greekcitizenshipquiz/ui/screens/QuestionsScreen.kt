@@ -1,5 +1,6 @@
 package com.aris.greekcitizenshipquiz.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.ui.text.style.TextAlign
 import com.aris.greekcitizenshipquiz.ui.model.AnswerState
 
 @Composable
@@ -68,90 +72,154 @@ fun QuestionsScreen(
 
         if (isFinished) {
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
 
-                Text(
-                    text = "Σκορ: $score / $totalQuestions",
-                    fontSize = 22.sp
-                )
-
-                Spacer(
-                    modifier = Modifier.height(20.dp)
-                )
-
-                Button(
+                Card(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp),
-
-                    onClick = {
-                        viewModel.loadQuestions(source)
-                    }
+                        .fillMaxWidth(0.9f),
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White.copy(alpha = 0.35f)
+                    ),
+                    border = BorderStroke(
+                        1.dp,
+                        Color.White.copy(alpha = 0.4f)
+                    )
                 ) {
 
-                    Text(
-                        text = "Ξανά προσπάθεια",
-                        fontSize = 20.sp
-                    )
-                }
-
-
-                Spacer(
-                    modifier = Modifier.height(16.dp)
-                )
-
-                if (!source.isIncorrectMode ) {
-
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(64.dp),
-
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFE65100)
-                        ),
-
-                        onClick = onIncorrectAnswers
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
-                        Icon(
-                            imageVector = Icons.Default.ErrorOutline,
-                            contentDescription = null
-                        )
+                        Surface(
+                            shape = RoundedCornerShape(50.dp),
+                            color = Color.White.copy(alpha = 0.70f)
+                        ) {
+
+                            Text(
+                                text = "Σκορ: $score / $totalQuestions",
+                                fontSize = 22.sp,
+                                modifier = Modifier
+                                    .padding(
+                                        horizontal = 20.dp,
+                                        vertical = 8.dp
+                                    )
+                            )
+                        }
 
                         Spacer(
-                            modifier = Modifier.width(8.dp)
+                            modifier = Modifier.height(20.dp)
                         )
 
-                        Text(
-                            text = "Τα λάθη μου",
-                            fontSize = 20.sp
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(64.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF37474F)
+                            ),
+
+
+                            onClick = onBackTo
+                        ) {
+
+                            Text(
+                                text = "Μενού",
+                                fontSize = 20.sp
+                            )
+                        }
+                        Spacer(
+                            modifier = Modifier.height(12.dp)
                         )
+
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(64.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF2E7D32)
+                            ),
+
+                            onClick = {
+                                viewModel.loadQuestions(source)
+                            }
+                        ) {
+
+                            Text(
+                                text = "Ξανά προσπάθεια",
+                                fontSize = 20.sp
+                            )
+                        }
+
+
+                        Spacer(
+                            modifier = Modifier.height(16.dp)
+                        )
+
+
+                        if (source.isIncorrectMode) {
+                            Button(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(64.dp),
+
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFFE65100)
+                                ),
+                                onClick = {
+                                    viewModel.loadQuestions(source)
+                                }
+                            ) {
+
+                                Icon(
+                                    imageVector = Icons.Default.ErrorOutline,
+                                    contentDescription = null
+                                )
+
+                                Spacer(
+                                    modifier = Modifier.width(8.dp)
+                                )
+
+                                Text(
+                                    text = "Τα λάθη μου",
+                                    fontSize = 20.sp
+                                )
+                            }
+
+                        } else {
+
+                            Button(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(64.dp),
+
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFFE65100)
+                                ),
+
+                                onClick = onIncorrectAnswers
+                            ) {
+
+                                Icon(
+                                    imageVector = Icons.Default.ErrorOutline,
+                                    contentDescription = null
+                                )
+
+                                Spacer(
+                                    modifier = Modifier.width(8.dp)
+                                )
+
+                                Text(
+                                    text = "Τα λάθη μου",
+                                    fontSize = 20.sp
+                                )
+                            }
+                        }
                     }
-                }
-
-                Spacer(
-                    modifier = Modifier.height(12.dp)
-                )
-
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp),
-
-                    onClick = onBackTo
-                ) {
-
-                    Text(
-                        text = "Μενού",
-                        fontSize = 20.sp
-                    )
                 }
             }
 
@@ -190,20 +258,44 @@ fun QuestionsScreen(
                         ) {
                             item {
 
-                                Surface(
-                                    shape = RoundedCornerShape(50.dp),
-                                    color = Color.White.copy(alpha = 0.70f)
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
 
-                                    Text(
-                                        text = "${currentIndex + 1} / ${state.questions.size}",
-                                        fontSize = 18.sp,
+                                    Button(
                                         modifier = Modifier
-                                            .padding(
-                                                horizontal = 20.dp,
-                                                vertical = 8.dp
-                                            )
-                                    )
+                                            .height(56.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color(0xFF37474F)
+                                        ),
+                                        onClick = onBackTo
+                                    ) {
+
+                                        Text(
+                                            text = "Μενού",
+                                            fontSize = 18.sp
+                                        )
+                                    }
+
+
+                                    Surface(
+                                        shape = RoundedCornerShape(50.dp),
+                                        color = Color.White.copy(alpha = 0.70f)
+                                    ) {
+
+                                        Text(
+                                            text = "${currentIndex + 1} / ${state.questions.size}",
+                                            fontSize = 18.sp,
+                                            modifier = Modifier
+                                                .padding(
+                                                    horizontal = 20.dp,
+                                                    vertical = 8.dp
+                                                )
+                                        )
+                                    }
                                 }
                             }
 
@@ -278,21 +370,63 @@ fun QuestionsScreen(
 
                 is QuestionsUiState.Empty -> {
 
-
                     Box(
                         modifier = Modifier
                             .fillMaxSize(),
-
                         contentAlignment = Alignment.Center
                     ) {
 
-                        Text(
-                            text = state.message
-                        )
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth(0.85f),
+                            shape = RoundedCornerShape(24.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White.copy(alpha = 0.85f)
+                            ),
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 8.dp
+                            )
+                        ) {
 
+                            Column(
+                                modifier = Modifier
+                                    .padding(24.dp)
+                                    .fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+
+                                Text(
+                                    text = state.message,
+                                    fontSize = 18.sp,
+                                    textAlign = TextAlign.Center,
+                                    color = Color.DarkGray
+                                )
+
+                                Spacer(
+                                    modifier = Modifier.height(24.dp)
+                                )
+
+                                Button(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(56.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(0xFF37474F)
+                                    ),
+                                    shape = RoundedCornerShape(16.dp),
+                                    onClick = onBackTo
+                                ) {
+
+                                    Text(
+                                        text = "Επιστροφή στο Μενού",
+                                        fontSize = 18.sp
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
-
                 is QuestionsUiState.Error -> {
 
 
