@@ -3,6 +3,7 @@ package com.aris.greekcitizenshipquiz.ui.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -31,6 +32,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.ui.text.style.TextAlign
 import com.aris.greekcitizenshipquiz.ui.model.AnswerState
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun QuestionsScreen(
@@ -64,6 +67,13 @@ fun QuestionsScreen(
     val score by viewModel.score.collectAsStateWithLifecycle()
 
     val correctAnswers by viewModel.correctAnswers.collectAsStateWithLifecycle()
+
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(currentIndex) {
+        delay(100.milliseconds)
+        listState.animateScrollToItem(0)
+    }
 
     LaunchedEffect(source) {
 
@@ -254,6 +264,7 @@ fun QuestionsScreen(
                                 top = 70.dp,
                                 bottom = 480.dp
                             ),
+                            state = listState,
 
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(12.dp)

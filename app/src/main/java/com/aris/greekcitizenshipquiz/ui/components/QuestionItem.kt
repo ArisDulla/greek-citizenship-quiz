@@ -28,7 +28,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalFocusManager
 
 @Composable
 fun QuestionItem(
@@ -76,6 +78,11 @@ fun QuestionItem(
         List(textAnswers.size) {
             FocusRequester()
         }
+    }
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(question.questionId) {
+        focusManager.clearFocus()
     }
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -241,6 +248,7 @@ fun QuestionItem(
                                 onDone = {
                                     keyboardController?.hide()
                                     focusRequesters[index].freeFocus()
+                                    focusManager.clearFocus()
                                 }
                             )
                         )
