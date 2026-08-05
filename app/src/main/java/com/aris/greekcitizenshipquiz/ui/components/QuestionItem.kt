@@ -39,7 +39,8 @@ fun QuestionItem(
     textAnswers: List<String>,
     onTextAnswerChanged: (Int, String) -> Unit,
     textAnswerResults: List<Boolean?>,
-    onCheckTextAnswers: () -> Unit
+    onCheckTextAnswers: () -> Unit,
+    correctAnswers: List<String?>,
 ) {
 
     val context = LocalContext.current
@@ -248,22 +249,73 @@ fun QuestionItem(
                         when(result) {
 
                             true -> {
-                                Text(
-                                    text = "✅ Σωστό",
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF2E7D32)
-                                )
+
+                                correctAnswers.getOrNull(index)?.let { correctAnswer ->
+
+                                    Text(
+                                        text = "✅ Σχεδόν σωστή!",
+                                        color = Color(0xFF2E7D32),
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 18.sp
+                                    )
+
+
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 4.dp, vertical = 12.dp),
+                                        shape = RoundedCornerShape(16.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = Color.White.copy(alpha = 0.85f)
+                                        ),
+                                        elevation = CardDefaults.cardElevation(
+                                            defaultElevation = 6.dp
+                                        )
+                                    ) {
+
+                                        Column(
+                                            modifier = Modifier
+                                                .padding(16.dp)
+                                        ) {
+
+
+                                    Text(
+                                        text = "Προσοχή στην ορθογραφία:",
+                                        color = Color(0xFFE65100),
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp
+                                    )
+
+                                    Text(
+                                        text = correctAnswer,
+                                        color = Color(0xFF1565C0),
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 24.sp
+                                    )
+                                        }
+                                    }
+                                }?: run {
+
+                                    Text(
+                                        text = "✅ Σωστή απάντηση",
+                                        color = Color(0xFF2E7D32),
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 18.sp
+                                    )
+
+
+                                }
                             }
 
 
                             false -> {
+
                                 Text(
                                     text = "❌ Λάθος",
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFFC62828)
                                 )
                             }
-
 
                             null -> {}
                         }
@@ -303,26 +355,51 @@ fun QuestionItem(
 
                 if (checked && textAnswerResults.any { it == false }) {
 
-                    Text(
-                        text = "Σωστές απαντήσεις:",
-                        fontSize = 18.sp,
-                        color = Color(0xFF2E7D32)
-                    )
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White.copy(alpha = 0.85f)
+                        ),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 4.dp
+                        )
+                    ) {
 
-                    question.options
-                        .filter { it.isCorrect }
-                        .forEach { option ->
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                        ) {
 
                             Text(
-                                text = "• ${option.optionText}",
-                                fontSize = 16.sp,
-                                color = Color(0xFF2E7D32)
+                                text = "Σωστές απαντήσεις:",
+                                fontSize = 22.sp,
+                                color = Color(0xFF0021CC),
+                                fontWeight = FontWeight.Bold
                             )
-                        }
 
-                    Spacer(
-                        modifier = Modifier.height(7.dp)
-                    )
+                            Spacer(
+                                modifier = Modifier.height(8.dp)
+                            )
+
+                            question.options
+                                .filter { it.isCorrect }
+                                .forEach { option ->
+
+                                    Text(
+                                        text = "• ${option.optionText}",
+                                        fontSize = 20.sp,
+                                        color = Color(0xFF2E7D32),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(
+                                        modifier = Modifier.height(5.dp)
+                                    )
+                                }
+                        }
+                    }
                 }
 
 

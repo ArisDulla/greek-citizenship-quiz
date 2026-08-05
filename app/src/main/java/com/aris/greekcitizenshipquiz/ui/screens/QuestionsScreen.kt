@@ -63,6 +63,8 @@ fun QuestionsScreen(
 
     val score by viewModel.score.collectAsStateWithLifecycle()
 
+    val correctAnswers by viewModel.correctAnswers.collectAsStateWithLifecycle()
+
     LaunchedEffect(source) {
 
         viewModel.loadQuestions(source)
@@ -324,7 +326,8 @@ fun QuestionsScreen(
                                                 questionId = it.questionId
                                             )
 
-                                        }
+                                        },
+                                        correctAnswers = correctAnswers
                                     )
 
                                 }

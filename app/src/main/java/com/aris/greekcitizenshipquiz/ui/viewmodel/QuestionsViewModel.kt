@@ -2,6 +2,7 @@ package com.aris.greekcitizenshipquiz.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aris.greekcitizenshipquiz.data.util.AnswerMatcher
 import com.aris.greekcitizenshipquiz.domain.model.QuestionOption
 import com.aris.greekcitizenshipquiz.domain.usecase.AddIncorrectAnswerUseCase
 import com.aris.greekcitizenshipquiz.domain.usecase.GetQuestionsByCategoryAndTypeUseCase
@@ -90,6 +91,11 @@ class QuestionsViewModel @Inject constructor(
 
     val isFinished = _isFinished.asStateFlow()
 
+    private val _correctAnswers =
+        MutableStateFlow<List<String?>>(emptyList())
+
+    val correctAnswers = _correctAnswers.asStateFlow()
+
     fun nextQuestion() {
 
         if (_currentIndex.value < _totalQuestions.value - 1) {
@@ -106,6 +112,12 @@ class QuestionsViewModel @Inject constructor(
                 List(
                     (currentQuestion?.maxCorrect ?: 0).coerceAtLeast(1)
                 ) { null }
+
+            _correctAnswers.value =
+                List(
+                    (currentQuestion?.maxCorrect ?: 0).coerceAtLeast(1)
+                ) { null }
+
         }else {
 
             _isFinished.value = true
@@ -117,36 +129,88 @@ class QuestionsViewModel @Inject constructor(
         val remainingAnswers = question.options
             .filter { it.isCorrect }
             .mapNotNull { it.optionText }
-            .map { AnswerNormalizer.normalize(it) }
             .toMutableList()
 
-        val results = _textAnswers.value.map { answer ->
 
-            val normalized = AnswerNormalizer.normalize(answer)
+        val correctAnswers = MutableList<String?>(
+            _textAnswers.value.size
+        ) { null }
 
-            if (remainingAnswers.contains(normalized)) {
-                remainingAnswers.remove(normalized) // χρησιμοποιήθηκε ήδη
+        val results = _textAnswers.value.mapIndexed { index, answer ->
+
+            val matchedAnswer = remainingAnswers.firstOrNull { correctAnswer ->
+
+                val normalizedUser =
+                    AnswerNormalizer.normalize(
+                        AnswerNormalizer.removeParentheses(answer)
+                    )
+
+                val correctWithoutSymbols =
+                    AnswerNormalizer.normalize(
+                        AnswerNormalizer.removeParentheses(correctAnswer)
+                    )
+
+                AnswerMatcher.containsWords(
+                    normalizedUser,
+                    correctWithoutSymbols
+                )
+            }
+
+            val correctAnswer = remainingAnswers.firstOrNull()
+
+            val exactMatch = remainingAnswers.firstOrNull { correctAnswer ->
+
+                val user =
+                    AnswerNormalizer.normalize(answer)
+
+                val correct =
+                    AnswerNormalizer.normalize(
+                        AnswerNormalizer.removeParentheses(correctAnswer)
+                    )
+
+                val parts = correctAnswer
+                    .replace("(", "")
+                    .replace(")", "")
+                    .split(" ")
+                    .map {
+                        AnswerNormalizer.normalize(it)
+                    }
+
+                user == correct ||
+                        parts.contains(user)
+            }
+
+
+            if (matchedAnswer != null) {
+
+                remainingAnswers.remove(matchedAnswer)
+
+                if (exactMatch == null) {
+                    correctAnswers[index] = matchedAnswer
+                }
+
                 true
+
             } else {
+
+                correctAnswers[index] = correctAnswer
+
                 false
             }
         }
-        _textAnswers.value = _textAnswers.value.mapIndexed { index, answer ->
-            if (results.getOrNull(index) == false) {
-                ""
-            } else {
-                answer
-            }
-        }
+
+        _correctAnswers.value = correctAnswers
+
 
         _textAnswerResults.value = results
+
 
         val isCorrect =
             results.isNotEmpty() &&
                     results.all { it }
 
-        viewModelScope.launch {
 
+        viewModelScope.launch {
 
             if (isCorrect) {
 
@@ -159,7 +223,6 @@ class QuestionsViewModel @Inject constructor(
                 addIncorrectAnswerUseCase(question.questionId)
             }
         }
-
         if (isCorrect) {
             _score.value++
             _answerState.value = AnswerState.CORRECT
@@ -285,6 +348,11 @@ class QuestionsViewModel @Inject constructor(
                         (questions.firstOrNull()?.maxCorrect ?: 0).coerceAtLeast(1)
                     ) { "" }
                 _textAnswerResults.value =
+                    List(
+                        (questions.firstOrNull()?.maxCorrect ?: 0).coerceAtLeast(1)
+                    ) { null }
+
+                _correctAnswers.value =
                     List(
                         (questions.firstOrNull()?.maxCorrect ?: 0).coerceAtLeast(1)
                     ) { null }
