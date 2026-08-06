@@ -147,7 +147,34 @@ fun QuestionItem(
                 }
             }
 
-            // Κύριο κείμενο
+            if (question.testGroup != null) {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+
+                    Surface(
+                        shape = RoundedCornerShape(50.dp),
+                        color = Color.White.copy(alpha = 0.70f)
+                    ) {
+
+                        Text(
+                            text = "Θέμα ${question.testGroup}",
+                            fontSize = 20.sp,
+                            color = Color.DarkGray,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .padding(
+                                    horizontal = 20.dp,
+                                    vertical = 8.dp
+                                )
+                        )
+                    }
+                }
+            }
+
 
             if (question.mainText.isValidText()) {
 

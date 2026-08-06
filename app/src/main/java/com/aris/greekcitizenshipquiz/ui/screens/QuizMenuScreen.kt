@@ -41,7 +41,8 @@ fun QuizMenuScreen(
     onIncorrectAnswers: () -> Unit,
     onCategoryClick: (Int) -> Unit,
     viewModel: QuizMenuViewModel = hiltViewModel(),
-    onNewQuestions: () -> Unit
+    onNewQuestions: () -> Unit,
+    onRandomTest: () -> Unit,
 ) {
     val incorrectCount by viewModel.incorrectCount.collectAsStateWithLifecycle()
     val categories by viewModel.categories.collectAsStateWithLifecycle()
@@ -133,6 +134,25 @@ fun QuizMenuScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(80.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF1565C0)
+                            ),
+                            onClick = onRandomTest
+                        ) {
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Text(
+                                text = "📝 Τεστ Εξέτασης\n20 Τυχαίες Ερωτήσεις",
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 34.sp
+                            )
+                        }
 
                         Button(
                             modifier = Modifier

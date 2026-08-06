@@ -21,6 +21,7 @@ import com.aris.greekcitizenshipquiz.ui.model.AnswerState
 import kotlinx.coroutines.Job
 import com.aris.greekcitizenshipquiz.domain.model.Question
 import com.aris.greekcitizenshipquiz.data.util.AnswerNormalizer
+import com.aris.greekcitizenshipquiz.domain.usecase.GetRandomTestQuestionsUseCase
 
 @HiltViewModel
 class QuestionsViewModel @Inject constructor(
@@ -32,6 +33,8 @@ class QuestionsViewModel @Inject constructor(
     private val getQuestionsByCategoryUseCase: GetQuestionsByCategoryUseCase,
 
     private val getQuestionsByCategoryAndTypeUseCase: GetQuestionsByCategoryAndTypeUseCase,
+
+    private val getRandomTestQuestionsUseCase: GetRandomTestQuestionsUseCase,
 
     private val addIncorrectAnswerUseCase: AddIncorrectAnswerUseCase,
     private val removeIncorrectAnswerUseCase: RemoveIncorrectAnswerUseCase
@@ -86,6 +89,10 @@ class QuestionsViewModel @Inject constructor(
     private val _score = MutableStateFlow(0)
 
     val score = _score.asStateFlow()
+
+    private val _scoreTest = MutableStateFlow(0.0)
+
+    val scoreTest = _scoreTest.asStateFlow()
 
     private val _isFinished = MutableStateFlow(false)
 
@@ -189,6 +196,12 @@ class QuestionsViewModel @Inject constructor(
                     correctAnswers[index] = matchedAnswer
                 }
 
+                if (currentSource == QuestionSource.RandomTest) {
+
+                    _scoreTest.value += question.points ?: 0.0
+
+                }
+
                 true
 
             } else {
@@ -232,7 +245,7 @@ class QuestionsViewModel @Inject constructor(
     }
     fun checkAnswer(
         option: QuestionOption,
-        questionId: Int
+        question: Question,
     ) {
 
         if (_selectedOptionId.value != null) {
@@ -245,7 +258,13 @@ class QuestionsViewModel @Inject constructor(
         _answerState.value =
             if (option.isCorrect) {
 
-                _score.value = _score.value + 1
+                if (currentSource == QuestionSource.RandomTest) {
+
+                    _scoreTest.value += question.points ?: 0.0
+
+                }
+
+                _score.value += 1
                 AnswerState.CORRECT
 
             } else {
@@ -261,14 +280,14 @@ class QuestionsViewModel @Inject constructor(
                 if (currentSource?.isIncorrectMode == true) {
 
                     removeIncorrectAnswerUseCase(
-                        questionId
+                        question.questionId
                     )
                 }
 
             } else {
 
                 addIncorrectAnswerUseCase(
-                    questionId
+                    question.questionId
                 )
             }
         }
@@ -310,6 +329,9 @@ class QuestionsViewModel @Inject constructor(
 
                 val questions = when(source) {
 
+                    QuestionSource.RandomTest -> {
+                        getRandomTestQuestionsUseCase()
+                    }
 
                     QuestionSource.Incorrect -> {
 

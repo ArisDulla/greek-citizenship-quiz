@@ -34,6 +34,7 @@ interface QuestionDao {
     WHERE questionNumber IN (:groups)
       AND categoryId = :categoryId
       AND isDeleted = 0
+    ORDER BY createdAt ASC
    """)
     suspend fun getQuestionsWithOptions(
         groups: List<Int>,

@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.aris.greekcitizenshipquiz.ui.model.AnswerState
 import kotlinx.coroutines.delay
@@ -42,6 +43,8 @@ fun QuestionsScreen(
     onIncorrectAnswers: () -> Unit,
     onBackTo: () -> Unit
 ) {
+
+    val scoreTest by viewModel.scoreTest.collectAsStateWithLifecycle()
 
     val currentIndex by viewModel.currentIndex
         .collectAsStateWithLifecycle()
@@ -106,21 +109,56 @@ fun QuestionsScreen(
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        if (source != QuestionSource.RandomTest) {
 
-                        Surface(
-                            shape = RoundedCornerShape(50.dp),
-                            color = Color.White.copy(alpha = 0.70f)
-                        ) {
+                            Surface(
+                                shape = RoundedCornerShape(50.dp),
+                                color = Color.White.copy(alpha = 0.70f)
+                            ) {
 
-                            Text(
-                                text = "Σκορ: $score / $totalQuestions",
-                                fontSize = 22.sp,
-                                modifier = Modifier
-                                    .padding(
-                                        horizontal = 20.dp,
-                                        vertical = 8.dp
+                                Text(
+                                    text = "Σκορ: $score / $totalQuestions",
+                                    fontSize = 22.sp,
+                                    modifier = Modifier
+                                        .padding(
+                                            horizontal = 20.dp,
+                                            vertical = 8.dp
+                                        )
+                                )
+                            }
+                        }
+                        else {
+
+                            Surface(
+                                shape = RoundedCornerShape(50.dp),
+                                color = Color.White.copy(alpha = 0.70f)
+                            ) {
+
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.padding(
+                                        horizontal = 32.dp,
+                                        vertical = 20.dp
                                     )
-                            )
+                                ) {
+
+                                    Text(
+                                        text = "Αποτέλεσμα",
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+
+                                    Spacer(
+                                        modifier = Modifier.height(8.dp)
+                                    )
+
+                                    Text(
+                                        text = "$scoreTest / 40",
+                                        fontSize = 32.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
 
                         Spacer(
@@ -293,21 +331,23 @@ fun QuestionsScreen(
                                         )
                                     }
 
+                                    if (source != QuestionSource.RandomTest) {
+                                        Surface(
+                                            shape = RoundedCornerShape(50.dp),
+                                            color = Color.White.copy(alpha = 0.70f)
+                                        ) {
 
-                                    Surface(
-                                        shape = RoundedCornerShape(50.dp),
-                                        color = Color.White.copy(alpha = 0.70f)
-                                    ) {
+                                            Text(
+                                                text = "${currentIndex + 1} / ${state.questions.size}",
+                                                fontSize = 18.sp,
+                                                modifier = Modifier
+                                                    .padding(
+                                                        horizontal = 20.dp,
+                                                        vertical = 8.dp
+                                                    )
+                                            )
 
-                                        Text(
-                                            text = "${currentIndex + 1} / ${state.questions.size}",
-                                            fontSize = 18.sp,
-                                            modifier = Modifier
-                                                .padding(
-                                                    horizontal = 20.dp,
-                                                    vertical = 8.dp
-                                                )
-                                        )
+                                        }
                                     }
                                 }
                             }
@@ -334,7 +374,7 @@ fun QuestionsScreen(
                                         onOptionSelected = { option ->
                                             viewModel.checkAnswer(
                                                 option = option,
-                                                questionId = it.questionId
+                                                question = it
                                             )
 
                                         },

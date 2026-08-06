@@ -28,7 +28,13 @@ data class Question(
 
     val options: List<QuestionOption>,
 
-    val images: List<QuestionImage>
+    val images: List<QuestionImage>,
+
+    val testGroup: Int? = null,
+
+    val testNumber: Int? = null,
+
+    val points: Double = 0.0
 
 ) {
 

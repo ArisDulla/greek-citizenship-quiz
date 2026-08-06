@@ -13,6 +13,8 @@ sealed interface QuestionSource {
 
     data object NewQuestions : QuestionSource
 
+    data object RandomTest : QuestionSource
+
 
     data class Category(
         val categoryId: Int

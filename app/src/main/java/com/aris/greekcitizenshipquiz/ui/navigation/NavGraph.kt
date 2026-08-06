@@ -19,6 +19,7 @@ private const val QUESTIONS_SCREEN = "questions/{categoryId}/{typeQuestionId}"
 
 private const val INCORRECT_QUESTIONS_SCREEN = "incorrect_questions"
 private const val NEW_QUESTIONS_SCREEN = "questions_new"
+private const val RANDOM_TEST_SCREEN = "random_test"
 
 private fun questionsRoute(
     categoryId: Int,
@@ -226,9 +227,37 @@ fun NavGraph() {
                     navController.navigate(
                         "questions_new"
                     )
+                },
+                onRandomTest = {
+                    navController.navigate(RANDOM_TEST_SCREEN)
                 }
             )
         }
+        composable(
+            route = RANDOM_TEST_SCREEN
+        ) {
+
+            QuestionsScreen(
+
+                source = QuestionSource.RandomTest,
+
+                onIncorrectAnswers = {
+
+                    navController.navigate(INCORRECT_QUESTIONS_SCREEN) {
+                        popUpTo(QUIZ_MENU_SCREEN) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+
+                },
+
+                onBackTo = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
         composable(
             route = NEW_QUESTIONS_SCREEN
         ) {
