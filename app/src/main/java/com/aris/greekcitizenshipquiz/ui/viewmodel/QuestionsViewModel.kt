@@ -57,10 +57,10 @@ class QuestionsViewModel @Inject constructor(
     private var currentSource: QuestionSource? = null
     private var loadJob: Job? = null
 
-    private var questions: List<Question> = emptyList()
+    private var loadedQuestions: List<Question> = emptyList()
 
     private val currentQuestion: Question?
-        get() = questions.getOrNull(_currentIndex.value)
+        get() = loadedQuestions.getOrNull(_currentIndex.value)
 
     private val _answerState = MutableStateFlow(
         AnswerState.NONE
@@ -297,7 +297,7 @@ class QuestionsViewModel @Inject constructor(
         _textAnswers.value = emptyList()
         _textAnswerResults.value = emptyList()
 
-        this@QuestionsViewModel.questions = emptyList()
+        loadedQuestions = emptyList()
 
 
         loadJob = viewModelScope.launch {
@@ -339,7 +339,7 @@ class QuestionsViewModel @Inject constructor(
                         )
                     }
                 }
-                this@QuestionsViewModel.questions = questions
+                loadedQuestions = questions
 
                 _totalQuestions.value = questions.size
 
