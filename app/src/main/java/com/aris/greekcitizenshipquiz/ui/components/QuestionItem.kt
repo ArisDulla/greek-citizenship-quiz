@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Icon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -28,9 +27,13 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.style.TextAlign
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun QuestionItem(
@@ -65,7 +68,7 @@ fun QuestionItem(
     val cardColor = when (answerState) {
 
         AnswerState.NONE ->
-            Color.White.copy(alpha = 0.50f)
+            Color.White.copy(alpha = 1.0f)
 
         AnswerState.CORRECT ->
             Color(0xFFC8E6C9)
@@ -81,11 +84,14 @@ fun QuestionItem(
     }
     val focusManager = LocalFocusManager.current
 
+    val keyboardController = LocalSoftwareKeyboardController.current
     LaunchedEffect(question.questionId) {
         focusManager.clearFocus()
-    }
+        delay(300.milliseconds)
 
-    val keyboardController = LocalSoftwareKeyboardController.current
+        focusRequesters[0].requestFocus()
+        keyboardController?.show()
+    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -113,6 +119,7 @@ fun QuestionItem(
             if (question.isNew) {
 
                 Surface(
+                    modifier = Modifier.align(Alignment.Start),
                     shape = RoundedCornerShape(50.dp),
                     color = Color(0xFFE8F5E9)
                 ) {
@@ -126,19 +133,8 @@ fun QuestionItem(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
-                        Icon(
-                            imageVector = Icons.Default.Verified,
-                            contentDescription = null,
-                            tint = Color(0xFF1B5E20),
-                            modifier = Modifier.size(22.dp)
-                        )
-
-                        Spacer(
-                            modifier = Modifier.width(6.dp)
-                        )
-
                         Text(
-                            text = "Νέα ερώτηση",
+                            text = "\uD83D\uDFE2 Νέα ερώτηση",
                             fontSize = 16.sp,
                             color = Color(0xFF1B5E20),
                             fontWeight = FontWeight.Bold
@@ -157,13 +153,13 @@ fun QuestionItem(
 
                     Surface(
                         shape = RoundedCornerShape(50.dp),
-                        color = Color.White.copy(alpha = 0.70f)
+                        color = Color(0xFFBBDEFB)
                     ) {
 
                         Text(
                             text = "Θέμα ${question.testGroup}",
                             fontSize = 20.sp,
-                            color = Color.DarkGray,
+                            color = Color.Black,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .padding(
@@ -190,10 +186,27 @@ fun QuestionItem(
                     it.isValidText()
                 }
                 ?.let {
-                    Text(
-                        text = it,
-                        fontSize = 22.sp
-                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = it,
+                            fontSize = 27.sp,
+                            textAlign = TextAlign.Start,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(modifier = Modifier.width(2.dp))
+
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = null
+                        )
+                    }
+
                 }
 
             question.focusCompletion
@@ -201,9 +214,12 @@ fun QuestionItem(
                     it.isValidText()
                 }
                 ?.let {
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = it,
-                        fontSize = 22.sp
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start,
+                        fontSize = 22.sp,
                     )
                 }
             val checked = textAnswerResults.any { it != null }
@@ -219,7 +235,7 @@ fun QuestionItem(
                         val fieldColor = when(result) {
                             true -> Color(0xFFE8F5E9)
                             false -> Color(0xFFFFEBEE)
-                            null -> Color.White
+                            null -> Color(0xFFE3F2FD)
                         }
 
                         val borderColor = when(result) {
@@ -462,7 +478,7 @@ fun QuestionItem(
 
                         modifier = Modifier
                             .fillMaxWidth()
-                            .defaultMinSize(minHeight = 60.dp),
+                            .defaultMinSize(minHeight = 80.dp),
 
                         shape = RoundedCornerShape(12.dp),
 
@@ -472,6 +488,11 @@ fun QuestionItem(
                         ),
 
                         enabled = answerState == AnswerState.NONE,
+
+                        border = BorderStroke(
+                            2.dp,
+                            Color.Black.copy(alpha = 0.6f)
+                        ),
 
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,
@@ -489,7 +510,9 @@ fun QuestionItem(
 
                                 Text(
                                     text = it,
-                                    fontSize = 18.sp
+                                    fontSize = 18.sp,
+                                    modifier = Modifier.weight(1f),
+                                    textAlign = TextAlign.Start
                                 )
                             }
                     }

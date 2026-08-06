@@ -35,6 +35,8 @@ import androidx.compose.ui.text.style.TextAlign
 import com.aris.greekcitizenshipquiz.ui.model.AnswerState
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Home
 
 @Composable
 fun QuestionsScreen(
@@ -320,15 +322,27 @@ fun QuestionsScreen(
                                         modifier = Modifier
                                             .height(56.dp),
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color(0xFF37474F)
+                                            containerColor = Color.White,
+                                            contentColor = Color.Black
                                         ),
                                         onClick = onBackTo
                                     ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Home,
+                                                contentDescription = "Home",
+                                                modifier = Modifier.size(22.dp)
+                                            )
 
-                                        Text(
-                                            text = "Μενού",
-                                            fontSize = 18.sp
-                                        )
+                                            Spacer(modifier = Modifier.width(8.dp))
+
+                                            Text(
+                                                text = "Αρχική",
+                                                fontSize = 18.sp
+                                            )
+                                        }
                                     }
 
                                     if (source != QuestionSource.RandomTest) {
@@ -403,7 +417,11 @@ fun QuestionsScreen(
 
                                             }
 
-                                        }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.White,
+                                            contentColor = Color.Black // χρώμα κειμένου
+                                        )
 
                                     ) {
 
@@ -412,7 +430,15 @@ fun QuestionsScreen(
                                                 if (currentIndex == state.questions.lastIndex)
                                                     "Τέλος"
                                                 else
-                                                    "Επόμενη"
+                                                    "Επόμενη",
+                                            fontSize = 22.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                            contentDescription = null
                                         )
 
                                     }

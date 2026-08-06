@@ -39,6 +39,8 @@ import com.aris.greekcitizenshipquiz.ui.components.AllQuestionsButton
 import com.aris.greekcitizenshipquiz.ui.components.CategoryHeader
 import com.aris.greekcitizenshipquiz.ui.state.TypesUiState
 import com.aris.greekcitizenshipquiz.ui.model.QuestionSource
+import androidx.compose.foundation.layout.Row
+
 @Composable
 fun CategoryTypesScreen(
     onMenu: () -> Unit,
@@ -75,19 +77,24 @@ fun CategoryTypesScreen(
                         .fillMaxWidth()
                         .height(64.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF37474F)
+                        containerColor = Color.White,
+                        contentColor = Color.Black
                     ),
                     onClick = onMenu,
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = null
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Κατηγορίες",
-                        fontSize = 20.sp
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Κατηγορίες",
+                            fontSize = 20.sp
+                        )
+                    }
                 }
             }
 

@@ -12,9 +12,9 @@ object AnswerMatcher {
         if (answer == correct) return true
 
         val maxErrors = when {
-            correct.length >= 20 -> 5
-            correct.length >= 10 -> 4
-            correct.length >= 6 -> 3
+            correct.length >= 20 -> 4
+            correct.length >= 10 -> 3
+            correct.length >= 6 -> 2
             else -> 1
         }
 

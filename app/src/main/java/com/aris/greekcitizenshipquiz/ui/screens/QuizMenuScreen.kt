@@ -72,7 +72,8 @@ fun QuizMenuScreen(
                             .fillMaxWidth()
                             .height(64.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF37474F)
+                            containerColor = Color.White,
+                            contentColor = Color.Black
                         ),
                         onClick = onHome
                     ) {
