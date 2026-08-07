@@ -1,6 +1,5 @@
 package com.aris.greekcitizenshipquiz.data.remote.util
 
-import android.util.Log
 import java.io.File
 import java.util.zip.ZipInputStream
 
@@ -26,13 +25,6 @@ object ZipExtractor {
 
 
             while (entry != null) {
-
-
-                Log.d(
-                    "ZIP",
-                    "ENTRY = ${entry.name}"
-                )
-
 
                 if (!entry.isDirectory) {
 
@@ -72,11 +64,6 @@ object ZipExtractor {
                             outputFile.outputStream().use { output ->
                                 zipInputStream.copyTo(output)
                             }
-
-                            Log.d(
-                                "ZIP",
-                                "IMAGE SAVED = ${outputFile.absolutePath}"
-                            )
                         }
                     }
                 }
@@ -87,14 +74,6 @@ object ZipExtractor {
                 entry = zipInputStream.nextEntry
             }
         }
-
-
-        Log.d(
-            "ZIP",
-            "TOTAL JSON FILES = ${files.size}"
-        )
-
-
         return files
     }
 }

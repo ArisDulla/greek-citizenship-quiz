@@ -24,7 +24,6 @@ import javax.inject.Singleton
 import com.aris.greekcitizenshipquiz.data.remote.dto.QuestionDto
 import com.aris.greekcitizenshipquiz.data.remote.dto.VersionDto
 import com.aris.greekcitizenshipquiz.data.mapper.toEntity
-import android.util.Log
 import com.aris.greekcitizenshipquiz.data.remote.error.SyncException
 import com.aris.greekcitizenshipquiz.domain.repository.QuizRepository
 import com.aris.greekcitizenshipquiz.domain.model.SyncResult
@@ -195,35 +194,7 @@ class QuizRepositoryImpl @Inject constructor(
 
             // --------------------
 
-            // Log parsed JSON data
-            Log.d(
-                "SYNC",
-                """
-            PARSE COMPLETED
 
-            Version:
-            ${newVersion.version}
-            ${newVersion.updatedAt}
-
-            Categories:
-            ${categories.size}
-
-            Types:
-            ${types.size}
-
-            Questions:
-            ${questions.size}
-
-            Options:
-            ${options.size}
-
-            Images:
-            ${images.size}
-
-            Exam Periods:
-            ${examPeriods.size}
-            """.trimIndent()
-            )
 
             // --------------------
             //
@@ -278,10 +249,6 @@ class QuizRepositoryImpl @Inject constructor(
                 syncMetaDao.saveSyncMeta(
                     newVersion.toEntity()
                 )
-                Log.d(
-                    "SYNC",
-                    "Database insert completed"
-                )
 
             }
             if (zipFile.exists()) {
@@ -291,7 +258,7 @@ class QuizRepositoryImpl @Inject constructor(
             SyncResult.Updated
 
         } catch (e: Exception) {
-            Log.e("SYNC", "Sync failed", e)
+
             SyncResult.Error(
                 e.message ?: "Unknown error"
             )
@@ -318,11 +285,6 @@ class QuizRepositoryImpl @Inject constructor(
                     input.copyTo(output)
                 }
         }
-
-        Log.d(
-            "SYNC",
-            "ZIP SIZE = ${file.length()}"
-        )
 
         return file
     }

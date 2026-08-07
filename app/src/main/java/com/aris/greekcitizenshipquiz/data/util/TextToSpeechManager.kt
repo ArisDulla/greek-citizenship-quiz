@@ -2,7 +2,6 @@ package com.aris.greekcitizenshipquiz.data.util
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
-import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,14 +36,10 @@ class TextToSpeechManager @Inject constructor(
 
 
     init {
-        Log.d(
-            "TTS_TEST",
-            "CREATED hash=${hashCode()}"
-        )
+
 
         tts = TextToSpeech(context) { status ->
-            Log.d("TTS_TEST", "TextToSpeechManager CREATED")
-            Log.d("TTS 22", "INIT STATUS = $status")
+
 
             if (status == TextToSpeech.SUCCESS) {
 
@@ -57,13 +52,6 @@ class TextToSpeechManager @Inject constructor(
                 initialized =
                     result != TextToSpeech.LANG_MISSING_DATA &&
                             result != TextToSpeech.LANG_NOT_SUPPORTED
-
-
-                Log.d(
-                    "TTS 22",
-                    "initialized=$initialized"
-                )
-
 
                 if (initialized) {
 
