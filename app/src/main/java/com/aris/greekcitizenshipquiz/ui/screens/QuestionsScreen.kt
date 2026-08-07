@@ -38,7 +38,11 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.aris.greekcitizenshipquiz.data.util.TextToSpeechManager
+import androidx.compose.material3.AlertDialog
 
 @Composable
 fun QuestionsScreen(
@@ -49,9 +53,61 @@ fun QuestionsScreen(
     ttsManager: TextToSpeechManager,
 ) {
 
+    var showExitDialog by remember { mutableStateOf(false) }
+
     BackHandler {
         ttsManager.stop()
-        onBackTo()
+        showExitDialog = true
+    }
+    if (showExitDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showExitDialog = false
+            },
+            title = {
+                Text("Έξοδος από το τεστ")
+            },
+            text = {
+                Text("Είσαι σίγουρος ότι θέλεις να φύγεις από το τεστ;")
+            },
+            confirmButton = {
+                Button(
+                    modifier = Modifier
+                        .width(110.dp)
+                        .height(52.dp),
+                    onClick = {
+                        showExitDialog = false
+                        onBackTo()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFC62828).copy(alpha = 0.85f)
+                    )
+                ) {
+                    Text(
+                        text = "Ναι",
+                        fontSize = 18.sp
+                    )
+                }
+            },
+            dismissButton = {
+                Button(
+                    modifier = Modifier
+                        .width(110.dp)
+                        .height(52.dp),
+                    onClick = {
+                        showExitDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF2E7D32).copy(alpha = 0.85f)
+                    )
+                ) {
+                    Text(
+                        text = "Όχι",
+                        fontSize = 18.sp
+                    )
+                }
+            }
+        )
     }
 
     val scoreTest by viewModel.scoreTest.collectAsStateWithLifecycle()
