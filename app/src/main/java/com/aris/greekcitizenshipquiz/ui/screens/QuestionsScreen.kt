@@ -1,5 +1,6 @@
 package com.aris.greekcitizenshipquiz.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,14 +38,21 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Home
+import com.aris.greekcitizenshipquiz.data.util.TextToSpeechManager
 
 @Composable
 fun QuestionsScreen(
     source: QuestionSource,
     viewModel: QuestionsViewModel = hiltViewModel(),
     onIncorrectAnswers: () -> Unit,
-    onBackTo: () -> Unit
+    onBackTo: () -> Unit,
+    ttsManager: TextToSpeechManager,
 ) {
+
+    BackHandler {
+        ttsManager.stop()
+        onBackTo()
+    }
 
     val scoreTest by viewModel.scoreTest.collectAsStateWithLifecycle()
 
@@ -325,7 +333,10 @@ fun QuestionsScreen(
                                             containerColor = Color.White,
                                             contentColor = Color.Black
                                         ),
-                                        onClick = onBackTo
+                                        onClick = {
+                                            ttsManager.stop()
+                                            onBackTo()
+                                        }
                                     ) {
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically
@@ -383,16 +394,20 @@ fun QuestionsScreen(
                                             )
                                         },
                                         onCheckTextAnswers = {
+                                            ttsManager.stop()
                                             viewModel.checkTextAnswers(it)
                                         },
                                         onOptionSelected = { option ->
+                                            ttsManager.stop()
                                             viewModel.checkAnswer(
                                                 option = option,
                                                 question = it
                                             )
-
                                         },
-                                        correctAnswers = correctAnswers
+                                        correctAnswers = correctAnswers,
+                                        speakText = { text: String ->
+                                            ttsManager.speak(text)
+                                        }
                                     )
 
                                 }
@@ -410,9 +425,9 @@ fun QuestionsScreen(
                                             if (currentIndex == state.questions.lastIndex) {
 
                                                 viewModel.finishQuiz()
-
+                                                ttsManager.stop()
                                             } else {
-
+                                                ttsManager.stop()
                                                 viewModel.nextQuestion()
 
                                             }

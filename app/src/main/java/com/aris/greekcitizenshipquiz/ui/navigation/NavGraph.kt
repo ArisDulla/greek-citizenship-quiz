@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.aris.greekcitizenshipquiz.data.util.TextToSpeechManager
 import com.aris.greekcitizenshipquiz.ui.model.QuestionSource
 import com.aris.greekcitizenshipquiz.ui.screens.CategoryTypesScreen
 import com.aris.greekcitizenshipquiz.ui.screens.QuestionsScreen
@@ -31,7 +32,7 @@ private fun categoryTypesRoute(
 ) = "$CATEGORY_TYPES_ROUTE/$categoryId"
 
 @Composable
-fun NavGraph() {
+fun NavGraph(ttsManager: TextToSpeechManager) {
 
     val navController = rememberNavController()
 
@@ -111,7 +112,8 @@ fun NavGraph() {
 
                 onBackTo = {
                     navController.popBackStack()
-                }
+                },
+                ttsManager = ttsManager,
 
             )
         }
@@ -178,7 +180,8 @@ fun NavGraph() {
 
                 onBackTo = {
                     navController.popBackStack()
-                }
+                },
+                ttsManager = ttsManager,
             )
         }
 
@@ -254,7 +257,8 @@ fun NavGraph() {
 
                 onBackTo = {
                     navController.popBackStack()
-                }
+                },
+                ttsManager = ttsManager,
             )
         }
 
@@ -279,7 +283,8 @@ fun NavGraph() {
 
                 onBackTo = {
                     navController.popBackStack()
-                }
+                },
+                ttsManager = ttsManager,
             )
         }
     }

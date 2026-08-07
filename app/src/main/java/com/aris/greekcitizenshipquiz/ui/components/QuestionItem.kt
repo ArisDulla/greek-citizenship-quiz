@@ -46,6 +46,7 @@ fun QuestionItem(
     textAnswerResults: List<Boolean?>,
     onCheckTextAnswers: () -> Unit,
     correctAnswers: List<String?>,
+    speakText: (String) -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -77,7 +78,7 @@ fun QuestionItem(
             Color(0xFFFFCDD2)
     }
 
-    val focusRequesters = remember(textAnswers.size) {
+    val focusRequesters = remember(question.questionId,textAnswers.size) {
         List(textAnswers.size) {
             FocusRequester()
         }
@@ -89,8 +90,10 @@ fun QuestionItem(
         focusManager.clearFocus()
         delay(300.milliseconds)
 
-        focusRequesters[0].requestFocus()
-        keyboardController?.show()
+        if (focusRequesters.isNotEmpty()) {
+            focusRequesters[0].requestFocus()
+            keyboardController?.show()
+        }
     }
 
     Card(
@@ -222,6 +225,67 @@ fun QuestionItem(
                         fontSize = 22.sp,
                     )
                 }
+
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = 80.dp),
+
+                shape = RoundedCornerShape(12.dp),
+
+                onClick = {
+
+                    val text = buildString {
+
+                        question.mainText
+                            .takeIf { it.isNotBlank() }
+                            ?.let {
+                                append(it).append(". ")
+                            }
+
+                        question.textCompletion
+                            ?.takeIf { it.isNotBlank() }
+                            ?.let {
+                                append(it).append(". ")
+                            }
+
+                        question.focusCompletion
+                            ?.takeIf { it.isNotBlank() }
+                            ?.let {
+                                append(it).append(". ")
+                            }
+
+
+                        if (
+                            question.typeQuestionId != 7 &&
+                            question.typeQuestionId != 8 &&
+                            question.typeQuestionId != 10
+                        ) {
+
+                            val opt = question.options
+                                .mapNotNull { it.optionText }
+                                .joinToString(". ")
+
+                            append(opt)
+                        }
+                    }
+                    if (text.isNotBlank()) {
+                        speakText(text)
+                    }
+                }
+            ) {
+
+                Text(
+                    text = "🔊 Άκουσε όλη την ερώτηση",
+                    fontSize = 18.sp
+                )
+            }
+
+
+
+
+
+
             val checked = textAnswerResults.any { it != null }
             if (question.isTextAnswer) {
 
@@ -449,6 +513,37 @@ fun QuestionItem(
                                         modifier = Modifier.height(5.dp)
                                     )
                                 }
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Start,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+
+                                    Button(
+                                        modifier = Modifier
+                                            .defaultMinSize(minHeight = 80.dp),
+
+                                        shape = RoundedCornerShape(12.dp),
+
+                                        onClick = {
+
+                                            val text = question.options
+                                                .filter { it.isCorrect }
+                                                .mapNotNull { it.optionText }
+                                                .joinToString(". ")
+                                            if (text.isNotBlank()) {
+                                            speakText(text)
+                                                }
+                                        }
+                                    ) {
+
+                                        Text(
+                                            text = "🔊 Άκουσε",
+                                            fontSize = 18.sp
+                                        )
+                                    }
+                                }
                         }
                     }
                 }
@@ -515,6 +610,41 @@ fun QuestionItem(
                                     textAlign = TextAlign.Start
                                 )
                             }
+                    }
+
+                    if (
+                        option.isCorrect &&
+                        answerState != AnswerState.NONE &&
+                        question.typeQuestionId != 2
+                    ) {
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
+                            Button(
+                                modifier = Modifier
+                                    .defaultMinSize(minHeight = 80.dp),
+
+                                shape = RoundedCornerShape(12.dp),
+
+                                onClick = {
+
+                                    option.optionText?.let {
+                                        speakText(it)
+                                    }
+
+                                }
+                            ) {
+
+                                Text(
+                                    text = "🔊 Άκουσε την απάντηση",
+                                    fontSize = 18.sp
+                                )
+                            }
+                        }
                     }
                 }
             }

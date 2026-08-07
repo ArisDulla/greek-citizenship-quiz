@@ -15,7 +15,7 @@ object AnswerMatcher {
             correct.length >= 20 -> 4
             correct.length >= 10 -> 3
             correct.length >= 6 -> 2
-            else -> 1
+            else -> 0
         }
 
         val difference = abs(answer.length - correct.length)

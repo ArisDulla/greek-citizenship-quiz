@@ -8,9 +8,14 @@ import com.aris.greekcitizenshipquiz.ui.navigation.NavGraph
 import com.aris.greekcitizenshipquiz.ui.theme.GreekCitizenshipQuizTheme
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.aris.greekcitizenshipquiz.data.util.TextToSpeechManager
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var ttsManager: TextToSpeechManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -22,7 +27,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             GreekCitizenshipQuizTheme {
-                NavGraph()
+                NavGraph(
+                    ttsManager = ttsManager
+                )
             }
         }
     }
