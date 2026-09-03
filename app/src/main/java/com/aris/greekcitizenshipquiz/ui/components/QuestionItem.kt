@@ -311,8 +311,14 @@ fun QuestionItem(
                         TextField(
                             value = answer,
                             singleLine = true,
-                            onValueChange = {
-                                onTextAnswerChanged(index, it)
+                            onValueChange = { newValue ->
+                                val filtered = newValue.filter {
+                                    it in '\u0370'..'\u03FF' ||
+                                            it in '\u1F00'..'\u1FFF' ||
+                                            it.isWhitespace()
+                                }
+
+                                onTextAnswerChanged(index, filtered)
                             },
                             placeholder = {
                                 Text("Απάντηση ${index + 1}")

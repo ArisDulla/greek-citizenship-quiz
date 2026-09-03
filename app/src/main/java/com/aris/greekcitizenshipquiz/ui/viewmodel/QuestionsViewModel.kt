@@ -184,7 +184,7 @@ class QuestionsViewModel @Inject constructor(
                     }
 
                 user == correct ||
-                        parts.contains(user)
+                        (parts.size <= 2 && parts.contains(user))
             }
 
 

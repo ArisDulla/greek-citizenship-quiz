@@ -9,12 +9,16 @@ object AnswerMatcher {
         correct: String
     ): Boolean {
 
+        val answer = answer.trim().lowercase()
+        val correct = correct.trim().lowercase()
+
         if (answer == correct) return true
 
         val maxErrors = when {
             correct.length >= 20 -> 4
             correct.length >= 10 -> 3
-            correct.length >= 6 -> 2
+            correct.length >= 5 -> 2
+            correct.length >= 3 -> 1
             else -> 0
         }
 
