@@ -407,12 +407,34 @@ fun QuestionItem(
                                         fontSize = 16.sp
                                     )
 
-                                    Text(
-                                        text = correctAnswer,
-                                        color = Color(0xFF1565C0),
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 24.sp
-                                    )
+                                            Column(
+                                                horizontalAlignment = Alignment.Start,
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Text(
+                                                    text = correctAnswer,
+                                                    color = Color(0xFF1565C0),
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 24.sp
+                                                )
+
+                                                Spacer(modifier = Modifier.height(8.dp))
+
+                                                Button(
+                                                    modifier = Modifier.defaultMinSize(minHeight = 80.dp),
+                                                    shape = RoundedCornerShape(12.dp),
+                                                    onClick = {
+                                                        if (correctAnswer.isNotBlank()) {
+                                                            speakText(correctAnswer)
+                                                        }
+                                                    }
+                                                ) {
+                                                    Text(
+                                                        text = "🔊 Άκουσε",
+                                                        fontSize = 18.sp
+                                                    )
+                                                }
+                                            }
                                         }
                                     }
                                 }?: run {
@@ -474,7 +496,7 @@ fun QuestionItem(
                 }
                 }
 
-                if (checked && textAnswerResults.any { it == false }) {
+                if (checked) {
 
                     Card(
                         modifier = Modifier
