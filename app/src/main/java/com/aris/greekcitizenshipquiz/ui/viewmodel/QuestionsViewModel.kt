@@ -145,23 +145,41 @@ class QuestionsViewModel @Inject constructor(
 
         val results = _textAnswers.value.mapIndexed { index, answer ->
 
-            val matchedAnswer = remainingAnswers.firstOrNull { correctAnswer ->
+            val matchedAnswer = remainingAnswers
+                .filter { correctAnswer ->
 
-                val normalizedUser =
-                    AnswerNormalizer.normalize(
-                        AnswerNormalizer.removeParentheses(answer)
+                    val normalizedUser =
+                        AnswerNormalizer.normalize(
+                            AnswerNormalizer.removeParentheses(answer)
+                        )
+
+                    val correctWithoutSymbols =
+                        AnswerNormalizer.normalize(
+                            AnswerNormalizer.removeParentheses(correctAnswer)
+                        )
+
+                    AnswerMatcher.containsWords(
+                        normalizedUser,
+                        correctWithoutSymbols
                     )
+                }
+                .minByOrNull { correctAnswer ->
 
-                val correctWithoutSymbols =
-                    AnswerNormalizer.normalize(
-                        AnswerNormalizer.removeParentheses(correctAnswer)
+                    val normalizedUser =
+                        AnswerNormalizer.normalize(
+                            AnswerNormalizer.removeParentheses(answer)
+                        )
+
+                    val normalizedCorrect =
+                        AnswerNormalizer.normalize(
+                            AnswerNormalizer.removeParentheses(correctAnswer)
+                        )
+
+                    AnswerMatcher.levenshteinDistance(
+                        normalizedUser,
+                        normalizedCorrect
                     )
-
-                AnswerMatcher.containsWords(
-                    normalizedUser,
-                    correctWithoutSymbols
-                )
-            }
+                }
 
             val correctAnswer = remainingAnswers.firstOrNull()
 

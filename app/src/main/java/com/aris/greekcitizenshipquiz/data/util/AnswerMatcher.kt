@@ -36,6 +36,21 @@ object AnswerMatcher {
         val userWords = userAnswer.split(" ")
         val correctWords = correctAnswer.split(" ")
 
+        if (correctWords.size == 1) {
+            return userWords.any { userWord ->
+                isCloseEnough(userWord, correctWords[0])
+            }
+        }
+
+        val sumTrue = userWords.count { userWord ->
+            correctWords.any { correctWord ->
+                isCloseEnough(userWord, correctWord)
+            }
+        }
+
+        if (correctWords.size == sumTrue) {
+            return true
+        }
         return userWords.all { userWord ->
             correctWords.any { correctWord ->
                 isCloseEnough(userWord, correctWord)
@@ -44,7 +59,7 @@ object AnswerMatcher {
     }
 
 
-    private fun levenshteinDistance(
+     fun levenshteinDistance(
         a: String,
         b: String
     ): Int {
