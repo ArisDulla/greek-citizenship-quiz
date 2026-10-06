@@ -32,3 +32,10 @@ Thumbs.db
 *.kotlin_module
 
 *.log
+
+# Generated files
+captures/
+.externalNativeBuild/
+.cxx/
+output-metadata.json
+app/release/baselineProfiles/
